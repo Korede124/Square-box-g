@@ -1,13 +1,27 @@
 
 import React, { useState } from 'react';
+import { motion } from 'motion/react';
+import { Trophy, Medal, Star, Users } from 'lucide-react';
 import { GAMES, MOCK_PLAYERS } from '../constants';
 
 const Leaderboard: React.FC = () => {
   const [activeGameId, setActiveGameId] = useState(GAMES[0].id);
 
   return (
-    <div className="py-20 px-6 max-w-5xl mx-auto">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="py-20 px-6 max-w-5xl mx-auto"
+    >
       <div className="text-center mb-16">
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 200 }}
+          className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-yellow-500/10 border border-yellow-500/20 mb-6"
+        >
+          <Trophy className="w-8 h-8 text-yellow-500" />
+        </motion.div>
         <h1 className="font-orbitron text-5xl font-black text-white mb-4 uppercase tracking-tighter">GLOBAL <span className="text-cyan-400">RANKINGS</span></h1>
         <p className="text-white/40 max-w-lg mx-auto uppercase text-xs font-bold tracking-[0.3em]">Where legends are written in neon</p>
       </div>
@@ -79,7 +93,7 @@ const Leaderboard: React.FC = () => {
           <p className="text-white/20 text-xs font-bold uppercase tracking-widest">Scores are updated in real-time. Keep playing to climb the ranks.</p>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

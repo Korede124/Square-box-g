@@ -1,5 +1,7 @@
 
 import React from 'react';
+import { motion } from 'motion/react';
+import { User as UserIcon, Wallet, ShieldCheck, Trophy, LogOut, Calendar, Mail, ExternalLink } from 'lucide-react';
 import { User, HighScore } from '../types';
 import { GAMES } from '../constants';
 import { Link } from 'react-router-dom';
@@ -36,7 +38,11 @@ const Profile: React.FC<ProfileProps> = ({ user, highScores, walletAddress }) =>
   ];
 
   return (
-    <div className="py-12 px-6 max-w-6xl mx-auto">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="py-12 px-6 max-w-6xl mx-auto"
+    >
       {/* Header Profile Card */}
       <div className="glass-panel rounded-[2rem] p-10 mb-12 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px] -mr-32 -mt-32"></div>
@@ -139,7 +145,7 @@ const Profile: React.FC<ProfileProps> = ({ user, highScores, walletAddress }) =>
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

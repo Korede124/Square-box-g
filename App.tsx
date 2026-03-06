@@ -1,18 +1,21 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'motion/react';
 import { User, HighScore } from './types';
 import Lobby from './pages/Lobby';
 import GamePage from './pages/GamePage';
 import Leaderboard from './pages/Leaderboard';
 import Profile from './pages/Profile';
 import Logo from './components/Logo';
+import SplashScreen from './components/SplashScreen';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [highScores, setHighScores] = useState<HighScore[]>([]);
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
   const location = useLocation();
 
   const handleAccountsChanged = useCallback((accounts: string[]) => {
@@ -39,7 +42,7 @@ const App: React.FC = () => {
       // Check for already connected accounts
       ethereum.request({ method: 'eth_accounts' })
         .then(handleAccountsChanged)
-        .catch((err: any) => console.error("Metamask connection check failed", err));
+        .catch((err: any) => console.error("EVM connection check failed", err));
 
       // Listen for account and chain changes
       ethereum.on('accountsChanged', handleAccountsChanged);
@@ -56,7 +59,7 @@ const App: React.FC = () => {
   const connectWallet = async () => {
     const ethereum = (window as any).ethereum;
     if (!ethereum) {
-      alert("MetaMask not detected! Please install the MetaMask extension to access the arcade.");
+      alert("EVM Wallet not detected! Please install an EVM-compatible wallet like MetaMask or OXN Wallet to access the arcade.");
       window.open('https://metamask.io/download/', '_blank');
       return;
     }
@@ -69,7 +72,7 @@ const App: React.FC = () => {
       if (error.code === 4001) {
         console.warn("User rejected the connection request.");
       } else {
-        console.error("MetaMask Error:", error);
+        console.error("Wallet Connection Error:", error);
       }
     } finally {
       setIsConnecting(false);
@@ -114,6 +117,12 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <AnimatePresence>
+        {showSplash && (
+          <SplashScreen onComplete={() => setShowSplash(false)} />
+        )}
+      </AnimatePresence>
+
       {/* Navigation */}
       <nav className="sticky top-0 z-50 glass-panel border-b border-white/10 px-6 py-4 flex justify-between items-center">
         <div className="flex items-center space-x-12">
@@ -177,12 +186,14 @@ const App: React.FC = () => {
 
       {/* Main Content */}
       <main className="flex-grow">
-        <Routes>
-          <Route path="/" element={<Lobby walletAddress={walletAddress} connectWallet={connectWallet} />} />
-          <Route path="/game/:gameId" element={<GamePage updateHighScore={updateHighScore} highScores={highScores} walletAddress={walletAddress} connectWallet={connectWallet} />} />
-          <Route path="/leaderboard" element={<Leaderboard />} />
-          <Route path="/profile" element={<Profile user={user} highScores={highScores} walletAddress={walletAddress} />} />
-        </Routes>
+        <AnimatePresence mode="wait">
+          <Routes location={location} key={location.pathname}>
+            <Route path="/" element={<Lobby walletAddress={walletAddress} connectWallet={connectWallet} />} />
+            <Route path="/game/:gameId" element={<GamePage updateHighScore={updateHighScore} highScores={highScores} walletAddress={walletAddress} connectWallet={connectWallet} />} />
+            <Route path="/leaderboard" element={<Leaderboard />} />
+            <Route path="/profile" element={<Profile user={user} highScores={highScores} walletAddress={walletAddress} />} />
+          </Routes>
+        </AnimatePresence>
       </main>
 
       {/* Footer */}
@@ -199,7 +210,7 @@ const App: React.FC = () => {
             <p className="text-white/40 text-sm leading-relaxed mb-8">
               The premier destination for high-performance arcade experiences in the browser. 
               Our proprietary game engine ensures low-latency competitive play across all modern devices.
-              MetaMask authentication required for high-score verification and leaderboard placement.
+              Official partner with Somnia and OXN Wallet. EVM authentication required for high-score verification.
             </p>
           </div>
           
@@ -215,7 +226,7 @@ const App: React.FC = () => {
         </div>
         
         <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-black text-white/20 uppercase tracking-[0.3em]">
-          <div>© 2024 YAKS TECHNOLOGY • POWERED BY METAMASK API</div>
+          <div>© 2024 YAKS TECHNOLOGY • POWERED BY EVM PROTOCOL • PARTNERED WITH SOMNIA & OXN</div>
           <div className="flex space-x-6">
             <span className="text-green-500/50">SYSTEMS: OPERATIONAL</span>
             <span className="text-cyan-500/50">VERSION: 2.1.0-STABLE</span>
