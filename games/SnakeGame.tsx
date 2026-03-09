@@ -5,6 +5,7 @@ interface SnakeGameProps {
   onGameOver: (score: number) => void;
   personalBest: number;
   walletAddress: string | null;
+  onStart?: () => void;
 }
 
 interface Particle {
@@ -19,7 +20,7 @@ interface Particle {
 const GRID_SIZE = 20;
 const CANVAS_SIZE = 600;
 
-const SnakeGame: React.FC<SnakeGameProps> = ({ onGameOver, personalBest, walletAddress }) => {
+const SnakeGame: React.FC<SnakeGameProps> = ({ onGameOver, personalBest, walletAddress, onStart }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
   // Game State
@@ -75,9 +76,10 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onGameOver, personalBest, walletA
         return () => clearTimeout(timer);
       } else {
         setGameState('PLAYING');
+        if (onStart) onStart();
       }
     }
-  }, [gameState, countdown]);
+  }, [gameState, countdown, onStart]);
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {

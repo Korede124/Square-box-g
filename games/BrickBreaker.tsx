@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 interface BrickBreakerProps {
   onGameOver: (score: number) => void;
+  onStart?: () => void;
 }
 
 const CANVAS_WIDTH = 800;
@@ -16,7 +17,7 @@ const BRICK_PADDING = 10;
 const BRICK_OFFSET_TOP = 60;
 const BRICK_OFFSET_LEFT = 35;
 
-const BrickBreaker: React.FC<BrickBreakerProps> = ({ onGameOver }) => {
+const BrickBreaker: React.FC<BrickBreakerProps> = ({ onGameOver, onStart }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [gameState, setGameState] = useState<'IDLE' | 'PLAYING' | 'GAMEOVER'>('IDLE');
   const [score, setScore] = useState(0);
@@ -50,6 +51,7 @@ const BrickBreaker: React.FC<BrickBreakerProps> = ({ onGameOver }) => {
     setLives(3);
     setGameState('PLAYING');
     resetBall();
+    if (onStart) onStart();
   };
 
   const draw = () => {

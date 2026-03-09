@@ -2,7 +2,7 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ChevronLeft, ShieldCheck, Zap, Cpu, Gamepad2, Wallet } from 'lucide-react';
+import { ChevronLeft, ShieldCheck, Zap, Cpu, Gamepad2, Wallet, Trophy } from 'lucide-react';
 import { GAMES } from '../constants';
 import { HighScore } from '../types';
 import SnakeGame from '../games/SnakeGame';
@@ -14,12 +14,26 @@ interface GamePageProps {
   highScores: HighScore[];
   walletAddress: string | null;
   connectWallet: () => Promise<void>;
+  points: number;
 }
 
-const GamePage: React.FC<GamePageProps> = ({ updateHighScore, highScores, walletAddress, connectWallet }) => {
+const GamePage: React.FC<GamePageProps> = ({ updateHighScore, highScores, walletAddress, connectWallet, points }) => {
   const { gameId } = useParams<{ gameId: string }>();
+  const [isGameActive, setIsGameActive] = React.useState(false);
   const game = GAMES.find(g => g.id === gameId);
   const userBest = highScores.find(s => s.gameId === gameId)?.score || 0;
+
+  React.useEffect(() => {
+    if (isGameActive) {
+      document.body.style.overflow = 'hidden';
+      window.scrollTo(0, 0);
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isGameActive]);
 
   if (!game) {
     return (
@@ -56,11 +70,20 @@ const GamePage: React.FC<GamePageProps> = ({ updateHighScore, highScores, wallet
 
     switch (gameId) {
       case 'snake':
-        return <SnakeGame onGameOver={(score) => updateHighScore('snake', score)} personalBest={userBest} walletAddress={walletAddress} />;
+        return <SnakeGame onGameOver={(score) => {
+          updateHighScore('snake', score);
+          setIsGameActive(false);
+        }} personalBest={userBest} walletAddress={walletAddress} onStart={() => setIsGameActive(true)} />;
       case 'brick-box':
-        return <BrickBreaker onGameOver={(score) => updateHighScore('brick-box', score)} />;
+        return <BrickBreaker onGameOver={(score) => {
+          updateHighScore('brick-box', score);
+          setIsGameActive(false);
+        }} onStart={() => setIsGameActive(true)} />;
       case 'car-racing':
-        return <CarRacing onGameOver={(score) => updateHighScore('car-racing', score)} />;
+        return <CarRacing onGameOver={(score) => {
+          updateHighScore('car-racing', score);
+          setIsGameActive(false);
+        }} onStart={() => setIsGameActive(true)} />;
       default:
         return (
           <div className="flex flex-col items-center justify-center p-20">
@@ -98,13 +121,18 @@ const GamePage: React.FC<GamePageProps> = ({ updateHighScore, highScores, wallet
               </div>
             </div>
             
-            <div className="glass-panel px-8 py-4 rounded-3xl flex items-center space-x-10 shadow-lg">
-              <div className="text-center">
+            <div className="glass-panel px-8 py-4 rounded-3xl flex items-center space-x-10 shadow-lg overflow-x-auto">
+              <div className="text-center min-w-fit">
                 <div className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em] mb-1">Personal Best</div>
                 <div className="font-orbitron font-black text-cyan-400 text-xl">{userBest.toLocaleString()}</div>
               </div>
-              <div className="h-10 w-px bg-white/10"></div>
-              <div className="text-center">
+              <div className="h-10 w-px bg-white/10 shrink-0"></div>
+              <div className="text-center min-w-fit">
+                <div className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em] mb-1">Total Points</div>
+                <div className="font-orbitron font-black text-yellow-400 text-xl">{points.toLocaleString()}</div>
+              </div>
+              <div className="h-10 w-px bg-white/10 shrink-0"></div>
+              <div className="text-center min-w-fit">
                 <div className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em] mb-1">Session Status</div>
                 <div className={`flex items-center space-x-2 font-orbitron font-black text-[10px] uppercase tracking-widest ${walletAddress ? 'text-green-400' : 'text-orange-400'}`}>
                   <div className={`w-1.5 h-1.5 rounded-full ${walletAddress ? 'bg-green-400' : 'bg-orange-400 animate-pulse'}`}></div>
@@ -165,14 +193,29 @@ const GamePage: React.FC<GamePageProps> = ({ updateHighScore, highScores, wallet
                 </div>
               </div>
 
-              <div className="glass-panel p-8 rounded-[2rem] flex flex-col justify-center items-center text-center border border-white/5 hover:border-white/10 transition-colors">
-                <div className="w-14 h-14 rounded-2xl bg-cyan-500/5 flex items-center justify-center mb-5 border border-cyan-500/20 shadow-inner">
-                  <Cpu className="h-7 w-7 text-cyan-400" />
+              <div className="glass-panel p-8 rounded-[2rem] border border-white/5 hover:border-white/10 transition-colors">
+                <div className="flex items-center space-x-3 mb-8">
+                  <Trophy className="w-4 h-4 text-yellow-500" />
+                  <h4 className="font-orbitron text-[10px] font-black text-white/20 tracking-[0.3em] uppercase">REWARDS SYSTEM</h4>
                 </div>
-                <h4 className="font-orbitron text-[11px] font-black text-white uppercase tracking-[0.3em] mb-1">PRO ENGINE</h4>
-                <p className="text-white/30 text-[9px] uppercase font-bold tracking-widest leading-relaxed">
-                  SECURE COMPUTE <br/> ANTI-CHEAT ACTIVE
-                </p>
+                <div className="space-y-4">
+                  <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest">
+                    <span className="text-white/40">1000 Pts</span>
+                    <span className="text-green-400">$0.50 USD</span>
+                  </div>
+                  <div className="h-px bg-white/5"></div>
+                  <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest">
+                    <span className="text-white/40">Score 5+</span>
+                    <span className="text-cyan-400">+10 Pts</span>
+                  </div>
+                  <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest">
+                    <span className="text-white/40">Score 10+</span>
+                    <span className="text-cyan-400">+50 Pts</span>
+                  </div>
+                  <div className="mt-4 p-2 bg-white/5 rounded-lg text-[8px] text-white/30 uppercase tracking-widest text-center">
+                    Withdrawals processed weekly
+                  </div>
+                </div>
               </div>
             </div>
           </div>

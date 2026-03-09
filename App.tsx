@@ -14,9 +14,20 @@ const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [highScores, setHighScores] = useState<HighScore[]>([]);
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
+  const [points, setPoints] = useState<number>(0);
   const [isConnecting, setIsConnecting] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
   const location = useLocation();
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleAccountsChanged = useCallback((accounts: string[]) => {
     if (accounts.length === 0) {
@@ -34,6 +45,10 @@ const App: React.FC = () => {
     const savedUser = localStorage.getItem('sqb_user');
     if (savedUser) {
       setUser(JSON.parse(savedUser));
+    }
+    const savedPoints = localStorage.getItem('sqb_points');
+    if (savedPoints) {
+      setPoints(parseInt(savedPoints));
     }
 
     const ethereum = (window as any).ethereum;
@@ -80,12 +95,14 @@ const App: React.FC = () => {
   };
 
   const handleLogin = () => {
+    const username = prompt("Enter your username for Mobile Login:") || "MobileGamer";
     const mockUser: User = {
-      id: 'u123',
-      username: 'Web3Voyager',
-      email: 'arcade@yaks.tech',
-      avatar: 'https://i.pravatar.cc/150?u=web3',
-      totalScore: 45000,
+      id: 'u' + Math.random().toString(36).substr(2, 9),
+      username: username,
+      email: `${username.toLowerCase()}@yaks.tech`,
+      avatar: `https://i.pravatar.cc/150?u=${username}`,
+      totalScore: 0,
+      points: points,
       joinedDate: new Date().toISOString()
     };
     setUser(mockUser);
@@ -98,19 +115,37 @@ const App: React.FC = () => {
   };
 
   const updateHighScore = (gameId: string, score: number) => {
+    // Reward Logic:
+    // 10 points if score reaches 5
+    // 50 points if score reaches 10
+    // Base reward: 2 points per game
+    let earnedPoints = 2;
+    if (score >= 10) earnedPoints += 50;
+    else if (score >= 5) earnedPoints += 10;
+
+    const newTotalPoints = points + earnedPoints;
+    setPoints(newTotalPoints);
+    localStorage.setItem('sqb_points', newTotalPoints.toString());
+
     const existingIndex = highScores.findIndex(s => s.gameId === gameId);
     let newScores = [...highScores];
     
     if (existingIndex > -1) {
       if (score > highScores[existingIndex].score) {
-        newScores[existingIndex] = { gameId, score, date: new Date().toISOString() };
+        newScores[existingIndex] = { gameId, score, pointsEarned: earnedPoints, date: new Date().toISOString() };
       }
     } else {
-      newScores.push({ gameId, score, date: new Date().toISOString() });
+      newScores.push({ gameId, score, pointsEarned: earnedPoints, date: new Date().toISOString() });
     }
     
     setHighScores(newScores);
     localStorage.setItem('sqb_high_scores', JSON.stringify(newScores));
+
+    if (user) {
+      const updatedUser = { ...user, points: newTotalPoints, totalScore: user.totalScore + score };
+      setUser(updatedUser);
+      localStorage.setItem('sqb_user', JSON.stringify(updatedUser));
+    }
   };
 
   const truncateAddress = (addr: string) => `${addr.slice(0, 6)}...${addr.slice(-4)}`;
@@ -145,30 +180,32 @@ const App: React.FC = () => {
 
         <div className="flex items-center space-x-4 lg:space-x-6">
           {/* Wallet Status / Connect Button */}
-          <button 
-            onClick={connectWallet}
-            disabled={isConnecting}
-            className={`flex items-center space-x-3 px-5 py-2.5 rounded-xl font-orbitron text-[10px] font-black uppercase tracking-widest transition-all border ${
-              walletAddress 
-              ? 'bg-green-500/10 border-green-500/30 text-green-400' 
-              : 'bg-orange-500/10 border-orange-500/50 text-orange-400 hover:bg-orange-500/20 active:scale-95 shadow-[0_0_15px_rgba(249,115,22,0.1)]'
-            }`}
-          >
-            <div className={`w-2 h-2 rounded-full ${walletAddress ? 'bg-green-400' : 'bg-orange-400 animate-pulse'}`}></div>
-            <span>{walletAddress ? truncateAddress(walletAddress) : (isConnecting ? 'Linking...' : 'Connect Wallet')}</span>
-          </button>
+          {!isMobile && (
+            <button 
+              onClick={connectWallet}
+              disabled={isConnecting}
+              className={`flex items-center space-x-3 px-5 py-2.5 rounded-xl font-orbitron text-[10px] font-black uppercase tracking-widest transition-all border ${
+                walletAddress 
+                ? 'bg-green-500/10 border-green-500/30 text-green-400' 
+                : 'bg-orange-500/10 border-orange-500/50 text-orange-400 hover:bg-orange-500/20 active:scale-95 shadow-[0_0_15px_rgba(249,115,22,0.1)]'
+              }`}
+            >
+              <div className={`w-2 h-2 rounded-full ${walletAddress ? 'bg-green-400' : 'bg-orange-400 animate-pulse'}`}></div>
+              <span>{walletAddress ? truncateAddress(walletAddress) : (isConnecting ? 'Linking...' : 'Connect Wallet')}</span>
+            </button>
+          )}
 
           <div className="h-6 w-px bg-white/10 hidden sm:block"></div>
 
           {user ? (
             <div className="flex items-center space-x-4">
-              <Link to="/profile" className="flex items-center space-x-3 bg-white/5 px-4 py-1.5 rounded-full border border-white/10 hover:border-cyan-500/50 transition-all group">
-                <img src={user.avatar} className="w-8 h-8 rounded-full border border-cyan-400" alt="avatar" />
-                <span className="text-xs font-bold text-white/80 hidden sm:inline group-hover:text-cyan-400">{user.username}</span>
+              <Link to="/profile" className="flex items-center space-x-3 bg-white/5 px-2 sm:px-4 py-1.5 rounded-full border border-white/10 hover:border-cyan-500/50 transition-all group">
+                <img src={user.avatar} className="w-6 h-6 sm:w-8 sm:h-8 rounded-full border border-cyan-400" alt="avatar" />
+                <span className="text-[10px] sm:text-xs font-bold text-white/80 hidden xs:inline group-hover:text-cyan-400">{user.username}</span>
               </Link>
               <button 
                 onClick={handleLogout}
-                className="text-[10px] font-black text-white/20 hover:text-red-400 uppercase tracking-widest transition-colors"
+                className="text-[9px] sm:text-[10px] font-black text-white/20 hover:text-red-400 uppercase tracking-widest transition-colors"
               >
                 Logout
               </button>
@@ -176,9 +213,9 @@ const App: React.FC = () => {
           ) : (
             <button 
               onClick={handleLogin}
-              className="bg-white/5 border border-white/10 hover:bg-white/10 px-6 py-2.5 rounded-xl font-orbitron font-black text-xs text-white transition-all active:scale-95"
+              className="bg-white/5 border border-white/10 hover:bg-white/10 px-4 sm:px-6 py-2.5 rounded-xl font-orbitron font-black text-[10px] sm:text-xs text-white transition-all active:scale-95"
             >
-              LOGIN
+              {isMobile ? 'MOBILE LOGIN' : 'LOGIN'}
             </button>
           )}
         </div>
@@ -187,11 +224,11 @@ const App: React.FC = () => {
       {/* Main Content */}
       <main className="flex-grow">
         <AnimatePresence mode="wait">
-          <Routes location={location} key={location.pathname}>
+          <Routes location={location}>
             <Route path="/" element={<Lobby walletAddress={walletAddress} connectWallet={connectWallet} />} />
-            <Route path="/game/:gameId" element={<GamePage updateHighScore={updateHighScore} highScores={highScores} walletAddress={walletAddress} connectWallet={connectWallet} />} />
+            <Route path="/game/:gameId" element={<GamePage updateHighScore={updateHighScore} highScores={highScores} walletAddress={walletAddress} connectWallet={connectWallet} points={points} />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
-            <Route path="/profile" element={<Profile user={user} highScores={highScores} walletAddress={walletAddress} />} />
+            <Route path="/profile" element={<Profile user={user} highScores={highScores} walletAddress={walletAddress} points={points} />} />
           </Routes>
         </AnimatePresence>
       </main>

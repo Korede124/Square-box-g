@@ -62,7 +62,7 @@ const Lobby: React.FC<LobbyProps> = ({ walletAddress, connectWallet }) => {
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="font-orbitron text-6xl md:text-8xl font-black text-white leading-[0.9] mb-8 uppercase tracking-tighter"
+            className="font-orbitron text-4xl sm:text-6xl md:text-8xl font-black text-white leading-[0.9] mb-8 uppercase tracking-tighter"
           >
             PRO GRADE <br/>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-white">ARCADE</span>
@@ -106,27 +106,27 @@ const Lobby: React.FC<LobbyProps> = ({ walletAddress, connectWallet }) => {
           transition={{ delay: 0.6 }}
           className="glass-panel rounded-3xl grid grid-cols-2 md:grid-cols-4 divide-x divide-white/5 overflow-hidden shadow-2xl"
         >
-          <div className="p-10 text-center group hover:bg-white/[0.02] transition-colors">
+          <div className="p-6 sm:p-10 text-center group hover:bg-white/[0.02] transition-colors">
             <Users className="w-5 h-5 mx-auto mb-3 text-cyan-400 opacity-50" />
-            <div className="text-cyan-400 font-orbitron text-3xl font-black mb-1">1,240+</div>
-            <div className="text-white/30 text-[10px] font-bold uppercase tracking-widest">Active Players</div>
+            <div className="text-cyan-400 font-orbitron text-xl sm:text-3xl font-black mb-1">1,240+</div>
+            <div className="text-white/30 text-[8px] sm:text-[10px] font-bold uppercase tracking-widest">Active Players</div>
           </div>
-          <div className="p-10 text-center group hover:bg-white/[0.02] transition-colors">
+          <div className="p-6 sm:p-10 text-center group hover:bg-white/[0.02] transition-colors">
             <Wallet className={`w-5 h-5 mx-auto mb-3 opacity-50 ${walletAddress ? 'text-green-400' : 'text-orange-400'}`} />
-            <div className={`font-orbitron text-2xl font-black mb-1 ${walletAddress ? 'text-green-400' : 'text-orange-400'}`}>
+            <div className={`font-orbitron text-lg sm:text-2xl font-black mb-1 ${walletAddress ? 'text-green-400' : 'text-orange-400'}`}>
               {walletAddress ? 'CONNECTED' : 'UNLINKED'}
             </div>
-            <div className="text-white/30 text-[10px] font-bold uppercase tracking-widest">Wallet Status</div>
+            <div className="text-white/30 text-[8px] sm:text-[10px] font-bold uppercase tracking-widest">Wallet Status</div>
           </div>
-          <div className="p-10 text-center group hover:bg-white/[0.02] transition-colors">
+          <div className="p-6 sm:p-10 text-center group hover:bg-white/[0.02] transition-colors">
             <Zap className="w-5 h-5 mx-auto mb-3 text-emerald-400 opacity-50" />
-            <div className="text-emerald-400 font-orbitron text-3xl font-black mb-1">$0.00</div>
-            <div className="text-white/30 text-[10px] font-bold uppercase tracking-widest">Platform Fee</div>
+            <div className="text-emerald-400 font-orbitron text-xl sm:text-3xl font-black mb-1">$0.00</div>
+            <div className="text-white/30 text-[8px] sm:text-[10px] font-bold uppercase tracking-widest">Platform Fee</div>
           </div>
-          <div className="p-10 text-center group hover:bg-white/[0.02] transition-colors">
+          <div className="p-6 sm:p-10 text-center group hover:bg-white/[0.02] transition-colors">
             <Clock className="w-5 h-5 mx-auto mb-3 text-white opacity-50" />
-            <div className="text-white font-orbitron text-3xl font-black mb-1">24/7</div>
-            <div className="text-white/30 text-[10px] font-bold uppercase tracking-widest">Live Uptime</div>
+            <div className="text-white font-orbitron text-xl sm:text-3xl font-black mb-1">24/7</div>
+            <div className="text-white/30 text-[8px] sm:text-[10px] font-bold uppercase tracking-widest">Live Uptime</div>
           </div>
         </motion.div>
       </div>

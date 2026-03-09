@@ -16,12 +16,14 @@ export interface User {
   email: string;
   avatar: string;
   totalScore: number;
+  points: number;
   joinedDate: string;
 }
 
 export interface HighScore {
   gameId: string;
   score: number;
+  pointsEarned: number;
   date: string;
 }
 

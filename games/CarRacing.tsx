@@ -3,9 +3,10 @@ import React, { useEffect, useRef, useState } from 'react';
 
 interface CarRacingProps {
   onGameOver: (score: number) => void;
+  onStart?: () => void;
 }
 
-const CarRacing: React.FC<CarRacingProps> = ({ onGameOver }) => {
+const CarRacing: React.FC<CarRacingProps> = ({ onGameOver, onStart }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [gameState, setGameState] = useState<'IDLE' | 'PLAYING' | 'GAMEOVER'>('IDLE');
   const [score, setScore] = useState(0);
@@ -24,6 +25,7 @@ const CarRacing: React.FC<CarRacingProps> = ({ onGameOver }) => {
     setDistance(0);
     speed.current = 5;
     setGameState('PLAYING');
+    if (onStart) onStart();
   };
 
   const spawnEnemy = () => {

@@ -10,9 +10,10 @@ interface ProfileProps {
   user: User | null;
   highScores: HighScore[];
   walletAddress: string | null;
+  points: number;
 }
 
-const Profile: React.FC<ProfileProps> = ({ user, highScores, walletAddress }) => {
+const Profile: React.FC<ProfileProps> = ({ user, highScores, walletAddress, points }) => {
   if (!user) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center p-6 text-center">
@@ -32,10 +33,12 @@ const Profile: React.FC<ProfileProps> = ({ user, highScores, walletAddress }) =>
 
   const stats = [
     { label: 'Total Score', value: user.totalScore.toLocaleString(), color: 'text-cyan-400' },
+    { label: 'Gaming Points', value: points.toLocaleString(), color: 'text-yellow-400' },
     { label: 'Network', value: walletAddress ? 'Linked' : 'Offline', color: walletAddress ? 'text-green-400' : 'text-orange-400' },
     { label: 'Ranking', value: '#1,248', color: 'text-emerald-400' },
-    { label: 'Medals', value: '12', color: 'text-orange-400' },
   ];
+
+  const usdValue = (points / 1000) * 0.5;
 
   return (
     <motion.div 
@@ -83,13 +86,26 @@ const Profile: React.FC<ProfileProps> = ({ user, highScores, walletAddress }) =>
           
           <div className="hidden lg:block w-px h-32 bg-white/5"></div>
           
-          <div className="grid grid-cols-2 gap-8 min-w-[300px]">
+          <div className="grid grid-cols-2 gap-8 w-full md:min-w-[300px]">
             {stats.map(stat => (
               <div key={stat.label}>
                 <div className="text-[10px] font-orbitron font-bold text-white/30 uppercase tracking-[0.2em] mb-1">{stat.label}</div>
                 <div className={`font-orbitron font-black text-2xl ${stat.color}`}>{stat.value}</div>
               </div>
             ))}
+            <div className="col-span-2 mt-4">
+              <button 
+                disabled={points < 1000 || !walletAddress}
+                onClick={() => alert(`Withdrawal of $${usdValue.toFixed(2)} (${points} points) initiated to ${walletAddress}. Processed weekly.`)}
+                className={`w-full py-3 rounded-xl font-orbitron font-black text-[10px] uppercase tracking-[0.2em] transition-all ${
+                  points >= 1000 && walletAddress
+                  ? 'bg-green-500 text-black shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:scale-[1.02] active:scale-95'
+                  : 'bg-white/5 text-white/20 cursor-not-allowed border border-white/5'
+                }`}
+              >
+                {points < 1000 ? 'MIN 1,000 PTS TO WITHDRAW' : !walletAddress ? 'CONNECT WALLET TO WITHDRAW' : `WITHDRAW $${usdValue.toFixed(2)}`}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -111,9 +127,10 @@ const Profile: React.FC<ProfileProps> = ({ user, highScores, walletAddress }) =>
                       </div>
                     </div>
                   </div>
-                  <div className="text-right">
+                  <div className="text-right flex flex-col items-end">
                     <div className="text-[10px] font-orbitron font-bold text-cyan-400 uppercase tracking-widest mb-1">Signed High Score</div>
                     <div className="font-orbitron font-black text-2xl text-white">{score.score.toLocaleString()}</div>
+                    <div className="text-[10px] font-bold text-yellow-400 uppercase tracking-widest mt-1">+{score.pointsEarned || 0} PTS</div>
                   </div>
                 </div>
               );
