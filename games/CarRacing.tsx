@@ -104,6 +104,9 @@ const CarRacing: React.FC<CarRacingProps> = ({ onGameOver, onStart }) => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (['ArrowLeft', 'ArrowRight', 'Space', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+        e.preventDefault();
+      }
       if (e.key === 'ArrowLeft' || e.key === 'a') carX.current = Math.max(50, carX.current - 125);
       if (e.key === 'ArrowRight' || e.key === 'd') carX.current = Math.min(300, carX.current + 125);
     };
@@ -137,7 +140,7 @@ const CarRacing: React.FC<CarRacingProps> = ({ onGameOver, onStart }) => {
         ref={canvasRef} 
         width={400} 
         height={600} 
-        className="h-full object-contain"
+        className="w-full h-full object-contain"
       />
 
       {gameState !== 'PLAYING' && (

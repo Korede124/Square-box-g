@@ -2,7 +2,7 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronLeft, ShieldCheck, Zap, Cpu, Gamepad2, Wallet, Trophy } from 'lucide-react';
+import { ChevronLeft, ShieldCheck, Zap, Cpu, Gamepad2, Wallet, Trophy, Maximize2, Minimize2, ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from 'lucide-react';
 import { GAMES } from '../constants';
 import { HighScore } from '../types';
 import SnakeGame from '../games/SnakeGame';
@@ -22,8 +22,41 @@ const GamePage: React.FC<GamePageProps> = ({ updateHighScore, highScores, wallet
   const [isGameActive, setIsGameActive] = React.useState(false);
   const [pointsWon, setPointsWon] = React.useState<number | null>(null);
   const [lastScore, setLastScore] = React.useState<number | null>(null);
+  const [isFullScreen, setIsFullScreen] = React.useState(false);
+  const gameContainerRef = React.useRef<HTMLDivElement>(null);
   const game = GAMES.find(g => g.id === gameId);
   const userBest = highScores.find(s => s.gameId === gameId)?.score || 0;
+
+  const toggleFullScreen = () => {
+    if (!gameContainerRef.current) return;
+
+    if (!document.fullscreenElement) {
+      gameContainerRef.current.requestFullscreen().catch(err => {
+        console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+      });
+      setIsFullScreen(true);
+    } else {
+      document.exitFullscreen();
+      setIsFullScreen(false);
+    }
+  };
+
+  React.useEffect(() => {
+    const handleFsChange = () => {
+      setIsFullScreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFsChange);
+    return () => document.removeEventListener('fullscreenchange', handleFsChange);
+  }, []);
+
+  const triggerKey = (key: string) => {
+    const event = new KeyboardEvent('keydown', {
+      key: key,
+      code: key,
+      bubbles: true
+    });
+    window.dispatchEvent(event);
+  };
 
   const handleGameOver = (score: number) => {
     const earned = updateHighScore(gameId!, score);
@@ -148,13 +181,24 @@ const GamePage: React.FC<GamePageProps> = ({ updateHighScore, highScores, wallet
             </div>
           </div>
 
-          <div className="relative">
+          <div className="relative" ref={gameContainerRef}>
             {/* The Main Game Container */}
             <motion.div 
               layout
-              className={`bg-[#050505] rounded-[3rem] overflow-hidden border transition-all duration-1000 min-h-[550px] ${walletAddress ? 'border-white/10 shadow-[0_40px_80px_-20px_rgba(0,0,0,1)]' : 'border-orange-500/20 shadow-[0_0_100px_rgba(249,115,22,0.03)]'} aspect-video md:aspect-[16/9] flex items-center justify-center relative`}
+              className={`bg-[#050505] rounded-[3rem] overflow-hidden border transition-all duration-1000 ${isFullScreen ? 'h-screen w-screen rounded-none border-none' : 'min-h-[400px] md:min-h-[550px] aspect-video md:aspect-[16/9]'} ${walletAddress ? 'border-white/10 shadow-[0_40px_80px_-20px_rgba(0,0,0,1)]' : 'border-orange-500/20 shadow-[0_0_100px_rgba(249,115,22,0.03)]'} flex items-center justify-center relative`}
             >
               {renderGameFrame()}
+              
+              {/* Full Screen Toggle Button */}
+              {walletAddress && (
+                <button 
+                  onClick={toggleFullScreen}
+                  className="absolute bottom-6 right-6 z-50 p-3 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 text-white/50 hover:text-white transition-all"
+                  title="Toggle Full Screen"
+                >
+                  {isFullScreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
+                </button>
+              )}
 
               {/* Points Won Popup Overlay */}
               <AnimatePresence>
@@ -190,6 +234,51 @@ const GamePage: React.FC<GamePageProps> = ({ updateHighScore, highScores, wallet
                 )}
               </AnimatePresence>
             </motion.div>
+            
+            {/* Mobile Controls Overlay */}
+            <div className="mt-8 flex flex-col items-center gap-6 md:hidden">
+              {!isGameActive && walletAddress && (
+                <button 
+                  onClick={() => triggerKey('Space')}
+                  className="w-full max-w-[200px] bg-cyan-600 hover:bg-cyan-500 text-white font-orbitron font-black py-4 rounded-2xl text-[10px] uppercase tracking-[0.2em] shadow-lg shadow-cyan-500/20 active:scale-95 transition-all"
+                >
+                  START GAME
+                </button>
+              )}
+
+              {isGameActive && (
+                <div className="flex flex-col items-center gap-4">
+                  <div className="grid grid-cols-3 gap-3">
+                    <div></div>
+                    <button 
+                      onPointerDown={(e) => { e.preventDefault(); triggerKey('ArrowUp'); }}
+                      className="w-20 h-20 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center active:bg-cyan-500/20 active:border-cyan-500/50 transition-all touch-none"
+                    >
+                      <ArrowUp className="w-10 h-10 text-white" />
+                    </button>
+                    <div></div>
+                    <button 
+                      onPointerDown={(e) => { e.preventDefault(); triggerKey('ArrowLeft'); }}
+                      className="w-20 h-20 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center active:bg-cyan-500/20 active:border-cyan-500/50 transition-all touch-none"
+                    >
+                      <ArrowLeft className="w-10 h-10 text-white" />
+                    </button>
+                    <button 
+                      onPointerDown={(e) => { e.preventDefault(); triggerKey('ArrowDown'); }}
+                      className="w-20 h-20 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center active:bg-cyan-500/20 active:border-cyan-500/50 transition-all touch-none"
+                    >
+                      <ArrowDown className="w-10 h-10 text-white" />
+                    </button>
+                    <button 
+                      onPointerDown={(e) => { e.preventDefault(); triggerKey('ArrowRight'); }}
+                      className="w-20 h-20 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center active:bg-cyan-500/20 active:border-cyan-500/50 transition-all touch-none"
+                    >
+                      <ArrowRight className="w-10 h-10 text-white" />
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
             
             {/* Contextual UI */}
             <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">

@@ -83,6 +83,10 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onGameOver, personalBest, walletA
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) {
+        e.preventDefault();
+      }
+
       if (gameState === 'IDLE' && e.code === 'Space' && !isGameOver) {
         setGameState('COUNTDOWN');
         return;
@@ -308,7 +312,7 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onGameOver, personalBest, walletA
         ref={canvasRef} 
         width={CANVAS_SIZE} 
         height={CANVAS_SIZE} 
-        className="max-w-full max-h-full object-contain rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/5"
+        className="w-full h-full max-w-full max-h-full object-contain rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/5"
       />
 
       {/* Countdown Overlay */}

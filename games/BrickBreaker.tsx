@@ -159,6 +159,9 @@ const BrickBreaker: React.FC<BrickBreakerProps> = ({ onGameOver, onStart }) => {
     };
     
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (['ArrowLeft', 'ArrowRight', 'Space', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+        e.preventDefault();
+      }
       if (e.key === 'ArrowLeft') paddleX.current = Math.max(0, paddleX.current - 20);
       if (e.key === 'ArrowRight') paddleX.current = Math.min(CANVAS_WIDTH - PADDLE_WIDTH, paddleX.current + 20);
     };
@@ -200,7 +203,7 @@ const BrickBreaker: React.FC<BrickBreakerProps> = ({ onGameOver, onStart }) => {
         ref={canvasRef} 
         width={CANVAS_WIDTH} 
         height={CANVAS_HEIGHT} 
-        className="max-w-full max-h-full object-contain cursor-none"
+        className="w-full h-full max-w-full max-h-full object-contain cursor-none"
       />
 
       {gameState !== 'PLAYING' && (
