@@ -146,6 +146,8 @@ const App: React.FC = () => {
       setUser(updatedUser);
       localStorage.setItem('sqb_user', JSON.stringify(updatedUser));
     }
+
+    return earnedPoints;
   };
 
   const truncateAddress = (addr: string) => `${addr.slice(0, 6)}...${addr.slice(-4)}`;

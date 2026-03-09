@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, ShieldCheck, Zap, Cpu, Gamepad2, Wallet, Trophy } from 'lucide-react';
 import { GAMES } from '../constants';
 import { HighScore } from '../types';
@@ -10,7 +10,7 @@ import BrickBreaker from '../games/BrickBreaker';
 import CarRacing from '../games/CarRacing';
 
 interface GamePageProps {
-  updateHighScore: (gameId: string, score: number) => void;
+  updateHighScore: (gameId: string, score: number) => number;
   highScores: HighScore[];
   walletAddress: string | null;
   connectWallet: () => Promise<void>;
@@ -20,8 +20,23 @@ interface GamePageProps {
 const GamePage: React.FC<GamePageProps> = ({ updateHighScore, highScores, walletAddress, connectWallet, points }) => {
   const { gameId } = useParams<{ gameId: string }>();
   const [isGameActive, setIsGameActive] = React.useState(false);
+  const [pointsWon, setPointsWon] = React.useState<number | null>(null);
+  const [lastScore, setLastScore] = React.useState<number | null>(null);
   const game = GAMES.find(g => g.id === gameId);
   const userBest = highScores.find(s => s.gameId === gameId)?.score || 0;
+
+  const handleGameOver = (score: number) => {
+    const earned = updateHighScore(gameId!, score);
+    setPointsWon(earned);
+    setLastScore(score);
+    setIsGameActive(false);
+    
+    // Auto-hide popup after 5 seconds
+    setTimeout(() => {
+      setPointsWon(null);
+      setLastScore(null);
+    }, 5000);
+  };
 
   React.useEffect(() => {
     if (isGameActive) {
@@ -70,20 +85,11 @@ const GamePage: React.FC<GamePageProps> = ({ updateHighScore, highScores, wallet
 
     switch (gameId) {
       case 'snake':
-        return <SnakeGame onGameOver={(score) => {
-          updateHighScore('snake', score);
-          setIsGameActive(false);
-        }} personalBest={userBest} walletAddress={walletAddress} onStart={() => setIsGameActive(true)} />;
+        return <SnakeGame onGameOver={handleGameOver} personalBest={userBest} walletAddress={walletAddress} onStart={() => setIsGameActive(true)} />;
       case 'brick-box':
-        return <BrickBreaker onGameOver={(score) => {
-          updateHighScore('brick-box', score);
-          setIsGameActive(false);
-        }} onStart={() => setIsGameActive(true)} />;
+        return <BrickBreaker onGameOver={handleGameOver} onStart={() => setIsGameActive(true)} />;
       case 'car-racing':
-        return <CarRacing onGameOver={(score) => {
-          updateHighScore('car-racing', score);
-          setIsGameActive(false);
-        }} onStart={() => setIsGameActive(true)} />;
+        return <CarRacing onGameOver={handleGameOver} onStart={() => setIsGameActive(true)} />;
       default:
         return (
           <div className="flex flex-col items-center justify-center p-20">
@@ -146,9 +152,43 @@ const GamePage: React.FC<GamePageProps> = ({ updateHighScore, highScores, wallet
             {/* The Main Game Container */}
             <motion.div 
               layout
-              className={`bg-[#050505] rounded-[3rem] overflow-hidden border transition-all duration-1000 min-h-[550px] ${walletAddress ? 'border-white/10 shadow-[0_40px_80px_-20px_rgba(0,0,0,1)]' : 'border-orange-500/20 shadow-[0_0_100px_rgba(249,115,22,0.03)]'} aspect-video md:aspect-[16/9] flex items-center justify-center`}
+              className={`bg-[#050505] rounded-[3rem] overflow-hidden border transition-all duration-1000 min-h-[550px] ${walletAddress ? 'border-white/10 shadow-[0_40px_80px_-20px_rgba(0,0,0,1)]' : 'border-orange-500/20 shadow-[0_0_100px_rgba(249,115,22,0.03)]'} aspect-video md:aspect-[16/9] flex items-center justify-center relative`}
             >
               {renderGameFrame()}
+
+              {/* Points Won Popup Overlay */}
+              <AnimatePresence>
+                {pointsWon !== null && (
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.8, y: -20 }}
+                    className="absolute inset-0 z-[100] flex items-center justify-center pointer-events-none"
+                  >
+                    <div className="glass-panel p-12 rounded-[3rem] border-2 border-yellow-500/50 bg-black/80 backdrop-blur-xl flex flex-col items-center text-center shadow-[0_0_100px_rgba(234,179,8,0.2)] pointer-events-auto">
+                      <div className="w-20 h-20 bg-yellow-500/20 rounded-full flex items-center justify-center mb-6 border border-yellow-500/30 animate-bounce">
+                        <Zap className="w-10 h-10 text-yellow-400 fill-yellow-400" />
+                      </div>
+                      <h3 className="font-orbitron text-xs font-black text-white/40 uppercase tracking-[0.4em] mb-2">Session Complete</h3>
+                      <div className="text-5xl font-orbitron font-black text-white mb-4">
+                        SCORE: {lastScore}
+                      </div>
+                      <div className="h-px w-32 bg-white/10 mb-6"></div>
+                      <div className="text-yellow-400 font-orbitron font-black text-4xl animate-pulse">
+                        +{pointsWon} POINTS
+                      </div>
+                      <p className="mt-6 text-[10px] font-black text-white/20 uppercase tracking-widest">Rewards added to your vault</p>
+                      
+                      <button 
+                        onClick={() => setPointsWon(null)}
+                        className="mt-8 px-8 py-3 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black text-white hover:bg-white/10 transition-all uppercase tracking-widest"
+                      >
+                        Dismiss
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.div>
             
             {/* Contextual UI */}
