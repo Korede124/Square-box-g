@@ -173,9 +173,9 @@ const GamePage: React.FC<GamePageProps> = ({ updateHighScore, highScores, wallet
                 <div className="font-orbitron font-black text-cyan-400 text-xl">{userBest.toLocaleString()}</div>
               </div>
               <div className="h-10 w-px bg-white/10 shrink-0"></div>
-              <div className="text-center min-w-fit">
-                <div className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em] mb-1">Total Points</div>
-                <div className="font-orbitron font-black text-yellow-400 text-xl">{points.toLocaleString()}</div>
+              <div className="text-center min-w-fit px-4 py-2 bg-yellow-400/5 rounded-2xl border border-yellow-400/10">
+                <div className="text-[10px] font-black text-yellow-400/40 uppercase tracking-[0.2em] mb-1">Total Points</div>
+                <div className="font-orbitron font-black text-yellow-400 text-2xl drop-shadow-[0_0_10px_rgba(250,204,21,0.3)]">{points.toLocaleString()}</div>
               </div>
               <div className="h-10 w-px bg-white/10 shrink-0"></div>
               <div className="text-center min-w-fit">
@@ -321,7 +321,7 @@ const GamePage: React.FC<GamePageProps> = ({ updateHighScore, highScores, wallet
                       SCORE: {lastScore}
                     </div>
                     <div className="h-px w-32 bg-white/10 mb-6"></div>
-                    <div className="text-yellow-400 font-orbitron font-black text-4xl animate-pulse">
+                    <div className="text-yellow-400 font-orbitron font-black text-5xl animate-pulse shadow-yellow-500/20 drop-shadow-[0_0_15px_rgba(234,179,8,0.5)]">
                       +{pointsWon} POINTS
                     </div>
                     <p className="mt-6 text-[10px] font-black text-white/20 uppercase tracking-widest">Rewards added to your vault</p>
@@ -387,7 +387,7 @@ const GamePage: React.FC<GamePageProps> = ({ updateHighScore, highScores, wallet
                 <div className="space-y-4">
                   <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest">
                     <span className="text-white/40">1000 Pts</span>
-                    <span className="text-green-400">$0.50 USD</span>
+                    <span className="text-green-400">$0.20 USD</span>
                   </div>
                   <div className="h-px bg-white/5"></div>
                   <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest">
@@ -398,8 +398,8 @@ const GamePage: React.FC<GamePageProps> = ({ updateHighScore, highScores, wallet
                     <span className="text-white/40">Score 10+</span>
                     <span className="text-cyan-400">+50 Pts</span>
                   </div>
-                  <div className="mt-4 p-2 bg-white/5 rounded-lg text-[8px] text-white/30 uppercase tracking-widest text-center">
-                    Withdrawals processed weekly
+                  <div className="mt-4 p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/20 text-[9px] text-cyan-400 font-black uppercase tracking-widest text-center animate-pulse">
+                    PLAY TO EARN REAL REWARDS
                   </div>
                 </div>
               </div>

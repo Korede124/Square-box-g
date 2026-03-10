@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { motion } from 'motion/react';
-import { User as UserIcon, Wallet, ShieldCheck, Trophy, LogOut, Calendar, Mail, ExternalLink } from 'lucide-react';
+import { User as UserIcon, Wallet, ShieldCheck, Trophy, LogOut, Calendar, Mail, ExternalLink, Edit2, Save, Camera } from 'lucide-react';
 import { User, HighScore } from '../types';
 import { GAMES } from '../constants';
 import { Link } from 'react-router-dom';
@@ -11,9 +11,26 @@ interface ProfileProps {
   highScores: HighScore[];
   walletAddress: string | null;
   points: number;
+  onUpdateProfile: (username: string, avatar: string) => void;
 }
 
-const Profile: React.FC<ProfileProps> = ({ user, highScores, walletAddress, points }) => {
+const Profile: React.FC<ProfileProps> = ({ user, highScores, walletAddress, points, onUpdateProfile }) => {
+  const [isEditing, setIsEditing] = React.useState(false);
+  const [editName, setEditName] = React.useState(user?.username || '');
+  const [editAvatar, setEditAvatar] = React.useState(user?.avatar || '');
+
+  React.useEffect(() => {
+    if (user) {
+      setEditName(user.username);
+      setEditAvatar(user.avatar);
+    }
+  }, [user]);
+
+  const handleSave = () => {
+    onUpdateProfile(editName, editAvatar);
+    setIsEditing(false);
+  };
+
   if (!user) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center p-6 text-center">
@@ -38,7 +55,7 @@ const Profile: React.FC<ProfileProps> = ({ user, highScores, walletAddress, poin
     { label: 'Ranking', value: '#1,248', color: 'text-emerald-400' },
   ];
 
-  const usdValue = (points / 1000) * 0.5;
+  const usdValue = (points / 1000) * 0.2;
 
   return (
     <motion.div 
@@ -52,11 +69,25 @@ const Profile: React.FC<ProfileProps> = ({ user, highScores, walletAddress, poin
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-orange-500/5 rounded-full blur-[60px] -ml-24 -mb-24"></div>
         
         <div className="relative z-10 flex flex-col md:flex-row items-center gap-10">
-          <div className="relative">
-            <div className="w-32 h-32 rounded-3xl border-2 border-cyan-400 p-1">
-              <img src={user.avatar} alt={user.username} className="w-full h-full rounded-2xl object-cover" />
+          <div className="relative group">
+            <div className="w-32 h-32 rounded-3xl border-2 border-cyan-400 p-1 overflow-hidden">
+              <img src={isEditing ? editAvatar : user.avatar} alt={user.username} className="w-full h-full rounded-2xl object-cover" />
             </div>
-            {walletAddress && (
+            {isEditing && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                <label className="cursor-pointer flex flex-col items-center">
+                  <Camera className="w-8 h-8 text-white mb-1" />
+                  <span className="text-[8px] text-white font-black uppercase">Change</span>
+                  <input 
+                    type="text" 
+                    className="hidden" 
+                    onChange={(e) => setEditAvatar(e.target.value)} 
+                    placeholder="Avatar URL"
+                  />
+                </label>
+              </div>
+            )}
+            {walletAddress && !isEditing && (
               <div className="absolute -top-2 -left-2 bg-green-500 p-1.5 rounded-full shadow-lg border-2 border-black" title="Verified Wallet">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
@@ -66,13 +97,61 @@ const Profile: React.FC<ProfileProps> = ({ user, highScores, walletAddress, poin
           </div>
           
           <div className="flex-grow text-center md:text-left">
-            <h1 className="font-orbitron text-4xl font-black text-white mb-2 uppercase tracking-tight">{user.username}</h1>
-            <div className="flex flex-col space-y-2">
-              <p className="text-white/40 text-xs font-bold uppercase tracking-widest">{user.email}</p>
-              {walletAddress && (
-                <p className="text-cyan-400 text-[10px] font-mono font-bold tracking-widest">{walletAddress}</p>
-              )}
-            </div>
+            {isEditing ? (
+              <div className="space-y-4">
+                <div className="flex flex-col">
+                  <label className="text-[10px] font-orbitron font-black text-white/20 uppercase tracking-widest mb-1">Username</label>
+                  <input 
+                    type="text" 
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white font-orbitron font-black uppercase tracking-tight focus:border-cyan-500/50 outline-none"
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-[10px] font-orbitron font-black text-white/20 uppercase tracking-widest mb-1">Avatar URL</label>
+                  <input 
+                    type="text" 
+                    value={editAvatar}
+                    onChange={(e) => setEditAvatar(e.target.value)}
+                    className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white font-mono text-xs focus:border-cyan-500/50 outline-none"
+                  />
+                </div>
+                <div className="flex space-x-3">
+                  <button 
+                    onClick={handleSave}
+                    className="flex items-center space-x-2 bg-cyan-500 text-black font-orbitron font-black px-6 py-2 rounded-xl text-[10px] uppercase tracking-widest hover:scale-105 active:scale-95 transition-all"
+                  >
+                    <Save className="w-3 h-3" />
+                    <span>Save Profile</span>
+                  </button>
+                  <button 
+                    onClick={() => setIsEditing(false)}
+                    className="bg-white/5 border border-white/10 text-white/40 font-orbitron font-black px-6 py-2 rounded-xl text-[10px] uppercase tracking-widest hover:text-white transition-all"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-center justify-center md:justify-start space-x-4 mb-2">
+                  <h1 className="font-orbitron text-4xl font-black text-white uppercase tracking-tight">{user.username}</h1>
+                  <button 
+                    onClick={() => setIsEditing(true)}
+                    className="p-2 bg-white/5 hover:bg-white/10 rounded-lg border border-white/10 text-white/40 hover:text-cyan-400 transition-all"
+                  >
+                    <Edit2 className="w-4 h-4" />
+                  </button>
+                </div>
+                <div className="flex flex-col space-y-2">
+                  <p className="text-white/40 text-xs font-bold uppercase tracking-widest">{user.email}</p>
+                  {walletAddress && (
+                    <p className="text-cyan-400 text-[10px] font-mono font-bold tracking-widest">{walletAddress}</p>
+                  )}
+                </div>
+              </>
+            )}
             <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-6">
               <span className="bg-white/5 border border-white/10 px-4 py-2 rounded-xl text-xs font-bold text-white/60">EST. {new Date(user.joinedDate).getFullYear()}</span>
               {walletAddress ? (

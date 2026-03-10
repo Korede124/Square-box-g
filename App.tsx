@@ -109,6 +109,14 @@ const App: React.FC = () => {
     localStorage.setItem('sqb_user', JSON.stringify(mockUser));
   };
 
+  const handleUpdateProfile = (username: string, avatar: string) => {
+    if (user) {
+      const updatedUser = { ...user, username, avatar };
+      setUser(updatedUser);
+      localStorage.setItem('sqb_user', JSON.stringify(updatedUser));
+    }
+  };
+
   const handleLogout = () => {
     setUser(null);
     localStorage.removeItem('sqb_user');
@@ -230,7 +238,7 @@ const App: React.FC = () => {
             <Route path="/" element={<Lobby walletAddress={walletAddress} connectWallet={connectWallet} />} />
             <Route path="/game/:gameId" element={<GamePage updateHighScore={updateHighScore} highScores={highScores} walletAddress={walletAddress} connectWallet={connectWallet} points={points} />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
-            <Route path="/profile" element={<Profile user={user} highScores={highScores} walletAddress={walletAddress} points={points} />} />
+            <Route path="/profile" element={<Profile user={user} highScores={highScores} walletAddress={walletAddress} points={points} onUpdateProfile={handleUpdateProfile} />} />
           </Routes>
         </AnimatePresence>
       </main>
