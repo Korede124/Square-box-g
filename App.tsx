@@ -304,7 +304,7 @@ const App: React.FC = () => {
             <p className="text-white/40 text-sm leading-relaxed mb-8">
               The premier destination for high-performance arcade experiences in the browser. 
               Our proprietary game engine ensures low-latency competitive play across all modern devices.
-              Official partner with Somnia and OXN Wallet. EVM authentication required for high-score verification.
+              Official partner with Somnia and OKX Wallet. EVM authentication required for high-score verification.
             </p>
           </div>
           
@@ -320,7 +320,7 @@ const App: React.FC = () => {
         </div>
         
         <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-black text-white/20 uppercase tracking-[0.3em]">
-          <div>© 2024 YAKS TECHNOLOGY • POWERED BY EVM PROTOCOL • PARTNERED WITH SOMNIA & OXN</div>
+          <div>© 2024 YAKS TECHNOLOGY • POWERED BY EVM PROTOCOL • PARTNERED WITH SOMNIA & OKX</div>
           <div className="flex space-x-6">
             <span className="text-green-500/50">SYSTEMS: OPERATIONAL</span>
             <span className="text-cyan-500/50">VERSION: 2.1.0-STABLE</span>

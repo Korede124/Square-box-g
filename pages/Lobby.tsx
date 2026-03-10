@@ -73,7 +73,7 @@ const Lobby: React.FC<LobbyProps> = ({ walletAddress, connectWallet }) => {
             transition={{ delay: 0.4 }}
             className="text-white/60 text-lg md:text-xl font-medium max-w-2xl mx-auto mb-12 leading-relaxed"
           >
-            Retro thrills meet production-ready Web3 security. Link your EVM Wallet to unlock built-in games and secure your spot on the hall of fame. Official partner with Somnia and OXN Wallet.
+            Retro thrills meet production-ready Web3 security. Link your EVM Wallet to unlock built-in games and secure your spot on the hall of fame. Official partner with Somnia and OKX Wallet.
           </motion.p>
           <motion.div 
             initial={{ y: 20, opacity: 0 }}
@@ -221,7 +221,7 @@ const Lobby: React.FC<LobbyProps> = ({ walletAddress, connectWallet }) => {
                 <Wallet className="w-12 h-12 text-cyan-400" />
               </div>
               <h4 className="font-orbitron text-sm font-black text-white mb-3 uppercase tracking-widest">EVM WALLET REQUIRED</h4>
-              <p className="text-white/40 text-[10px] mb-8 leading-relaxed uppercase font-bold tracking-widest">To secure your high scores and join the global leaderboards, you must link your identity via the EVM Protocol. Compatible with MetaMask, OXN, and Somnia.</p>
+              <p className="text-white/40 text-[10px] mb-8 leading-relaxed uppercase font-bold tracking-widest">To secure your high scores and join the global leaderboards, you must link your identity via the EVM Protocol. Compatible with MetaMask, OKX, and Somnia.</p>
               <button 
                 onClick={connectWallet}
                 className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-orbitron font-black py-4 rounded-2xl text-[10px] uppercase tracking-[0.2em] shadow-lg shadow-cyan-500/20 active:scale-95 transition-all"
