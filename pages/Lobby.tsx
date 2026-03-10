@@ -26,54 +26,46 @@ const Lobby: React.FC<LobbyProps> = ({ walletAddress, connectWallet }) => {
       className="pb-20"
     >
       {/* Hero Section */}
-      <section className="relative h-[600px] flex items-center justify-center overflow-hidden">
-        {/* Animated Background Element */}
+      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+        {/* Partnership Background Image */}
         <div className="absolute inset-0 z-0">
-          <motion.div 
-            animate={{ 
-              scale: [1, 1.2, 1],
-              opacity: [0.1, 0.15, 0.1]
-            }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-cyan-500/10 rounded-full blur-[120px]"
-          ></motion.div>
-          <motion.div 
-            animate={{ 
-              scale: [1, 1.3, 1],
-              opacity: [0.05, 0.08, 0.05]
-            }}
-            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-            className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-purple-500/5 rounded-full blur-[100px]"
-          ></motion.div>
-          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
+          <img 
+            src="https://storage.googleapis.com/test-full-stack-apps/ct6b44ynmdawtk2ywyz42c/1741606692257.png" 
+            alt="Partnership Background" 
+            className="w-full h-full object-cover"
+            referrerPolicy="no-referrer"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black"></div>
+          <div className="absolute inset-0 bg-black/20"></div>
         </div>
 
-        <div className="relative z-10 text-center px-4 max-w-4xl">
+        <div className="relative z-10 text-center px-4 max-w-5xl">
           <motion.div 
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="inline-flex items-center space-x-3 px-4 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/5 text-cyan-400 text-[10px] font-orbitron font-black tracking-[0.3em] uppercase mb-8"
+            className="inline-flex items-center space-x-3 px-6 py-2 rounded-full border border-cyan-500/50 bg-black/60 backdrop-blur-md text-cyan-400 text-[10px] font-orbitron font-black tracking-[0.4em] uppercase mb-8"
           >
             <Zap className="w-3 h-3 fill-cyan-400" />
-            <span>AUTHENTICATED GAMING NETWORK</span>
+            <span>PAGANI X SQUARE BOX STRATEGIC PARTNER</span>
           </motion.div>
           <motion.h1 
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="font-orbitron text-4xl sm:text-6xl md:text-8xl font-black text-white leading-[0.9] mb-8 uppercase tracking-tighter"
+            className="font-orbitron text-5xl sm:text-7xl md:text-9xl font-black text-white leading-[0.85] mb-8 uppercase tracking-tighter drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)]"
           >
-            PRO GRADE <br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-white">ARCADE</span>
+            LIMITLESS <br/>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-white">VELOCITY</span>
           </motion.h1>
           <motion.p 
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="text-white/60 text-lg md:text-xl font-medium max-w-2xl mx-auto mb-12 leading-relaxed"
+            className="text-white text-lg md:text-2xl font-bold max-w-3xl mx-auto mb-12 leading-relaxed drop-shadow-lg"
           >
-            Retro thrills meet production-ready Web3 security. Link your EVM Wallet to unlock built-in games and secure your spot on the hall of fame. Official partner with Somnia and OKX Wallet.
+            The world's most advanced arcade network, powered by OKX and Somnia. 
+            Experience the fusion of high-performance engineering and Web3 gaming.
           </motion.p>
           <motion.div 
             initial={{ y: 20, opacity: 0 }}
@@ -95,6 +87,50 @@ const Lobby: React.FC<LobbyProps> = ({ walletAddress, connectWallet }) => {
               </button>
             )}
           </motion.div>
+        </div>
+      </section>
+
+      {/* Strategic Partnership Section */}
+      <section className="max-w-7xl mx-auto px-6 mb-32">
+        <div className="relative rounded-[3rem] overflow-hidden border border-white/10 bg-black shadow-2xl">
+          <div className="grid grid-cols-1 lg:grid-cols-2">
+            <div className="relative h-[300px] lg:h-auto overflow-hidden">
+              <img 
+                src="https://storage.googleapis.com/test-full-stack-apps/ct6b44ynmdawtk2ywyz42c/1741606692257.png" 
+                alt="Pagani Partnership" 
+                className="w-full h-full object-cover"
+                referrerPolicy="no-referrer"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent lg:hidden"></div>
+            </div>
+            <div className="p-12 flex flex-col justify-center">
+              <div className="flex items-center space-x-4 mb-6">
+                <div className="px-4 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-[10px] font-orbitron font-black tracking-[0.3em] uppercase">
+                  Strategic Asset
+                </div>
+                <div className="h-px w-12 bg-white/10"></div>
+                <span className="text-white/30 text-[10px] font-orbitron font-black tracking-[0.3em] uppercase">Verified</span>
+              </div>
+              <h2 className="font-orbitron text-4xl md:text-5xl font-black text-white mb-6 uppercase tracking-tighter leading-none">
+                PAGANI X <br/>
+                <span className="text-cyan-400">SQUARE BOX</span>
+              </h2>
+              <p className="text-white/50 text-lg mb-10 leading-relaxed">
+                Experience the pinnacle of digital performance. Our collaboration with Pagani brings world-class engineering aesthetics to the arcade, ensuring every session is as refined as it is fast.
+              </p>
+              <div className="flex items-center space-x-8">
+                <div className="flex flex-col">
+                  <span className="text-white/20 text-[10px] font-black uppercase tracking-widest mb-1">Engine</span>
+                  <span className="text-white font-orbitron font-black">V12 DIGITAL</span>
+                </div>
+                <div className="w-px h-8 bg-white/10"></div>
+                <div className="flex flex-col">
+                  <span className="text-white/20 text-[10px] font-black uppercase tracking-widest mb-1">Network</span>
+                  <span className="text-cyan-400 font-orbitron font-black">SOMNIA MAINNET</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
