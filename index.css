@@ -3,6 +3,7 @@
 @theme {
   --font-orbitron: "Orbitron", sans-serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --animate-spin-slow: spin 8s linear infinite;
 }
 
 @layer base {
