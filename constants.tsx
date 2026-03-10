@@ -25,8 +25,8 @@ export const GAMES: Game[] = [
   {
     id: 'car-racing',
     title: 'Velocity Racer',
-    description: 'Top-down high speed racing. Avoid traffic at all costs.',
-    thumbnail: 'https://picsum.photos/seed/race/600/400',
+    description: 'Pseudo-3D F1 racing. Complete laps to earn points. High speed, high stakes.',
+    thumbnail: 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?q=80&w=2070&auto=format&fit=crop',
     category: 'Racing',
     isBuiltIn: true,
     status: 'playable',
