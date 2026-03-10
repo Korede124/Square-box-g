@@ -96,8 +96,8 @@ const Lobby: React.FC<LobbyProps> = ({ walletAddress, connectWallet }) => {
           <div className="grid grid-cols-1 lg:grid-cols-2">
             <div className="relative h-[300px] lg:h-auto overflow-hidden">
               <img 
-                src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?q=80&w=2070&auto=format&fit=crop" 
-                alt="Pagani Huayra Partnership" 
+                src="https://images.unsplash.com/photo-1594731831303-366059635091?q=80&w=2070&auto=format&fit=crop" 
+                alt="Pagani Huayra Roadster" 
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
               />
@@ -166,6 +166,50 @@ const Lobby: React.FC<LobbyProps> = ({ walletAddress, connectWallet }) => {
           </div>
         </motion.div>
       </div>
+
+      {/* Pagani Vision Section */}
+      <section className="max-w-7xl mx-auto px-6 mb-32">
+        <div className="flex flex-col md:flex-row items-center gap-16">
+          <div className="flex-1 space-y-8">
+            <div className="inline-flex items-center space-x-3 px-4 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/5 text-cyan-400 text-[10px] font-orbitron font-black tracking-[0.3em] uppercase">
+              Vision Module
+            </div>
+            <h2 className="font-orbitron text-5xl md:text-7xl font-black text-white leading-[0.85] uppercase tracking-tighter">
+              PAGANI <br/>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-white">UTOPIA</span>
+            </h2>
+            <p className="text-white/40 text-lg leading-relaxed max-w-xl">
+              A masterpiece of kinetic art. The Pagani Utopia represents the pinnacle of automotive design, now integrated into the Square Box ecosystem for an unparalleled digital experience.
+            </p>
+            <div className="grid grid-cols-2 gap-8">
+              <div className="space-y-1">
+                <div className="text-white/20 text-[10px] font-black uppercase tracking-widest">Acceleration</div>
+                <div className="text-white font-orbitron font-black text-xl">0-100 IN 2.8S</div>
+              </div>
+              <div className="space-y-1">
+                <div className="text-white/20 text-[10px] font-black uppercase tracking-widest">Top Speed</div>
+                <div className="text-white font-orbitron font-black text-xl">350+ KM/H</div>
+              </div>
+            </div>
+          </div>
+          <div className="flex-1 relative group">
+            <div className="absolute -inset-4 bg-cyan-500/20 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+            <div className="relative rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl">
+              <img 
+                src="https://images.unsplash.com/photo-1676300185292-e23bb3db50ad?q=80&w=2070&auto=format&fit=crop" 
+                alt="Pagani Utopia AI Vision" 
+                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                referrerPolicy="no-referrer"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+              <div className="absolute bottom-8 left-8">
+                <div className="text-white/40 text-[10px] font-black uppercase tracking-widest mb-1">Model Status</div>
+                <div className="text-white font-orbitron font-black">ACTIVE PROTOCOL</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Main Content Area */}
       <div id="games" className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-16">
