@@ -88,34 +88,34 @@ const App: React.FC = () => {
       return;
     }
 
+    const walletName = providerType === 'okx' ? 'OKX Wallet' : (providerType === 'metamask' ? 'MetaMask' : 'EVM Wallet');
     let provider: any = null;
 
-    if (providerType === 'okx') {
-      provider = (window as any).okxwallet;
-    } else if (providerType === 'metamask') {
-      // Look for MetaMask specifically if multiple providers exist
-      const ethereum = (window as any).ethereum;
-      if (ethereum?.providers) {
-        provider = ethereum.providers.find((p: any) => p.isMetaMask);
-      } else if (ethereum?.isMetaMask) {
-        provider = ethereum;
-      }
-    } else {
-      provider = (window as any).ethereum;
-    }
-
-    if (!provider) {
-      const walletName = providerType === 'okx' ? 'OKX Wallet' : (providerType === 'metamask' ? 'MetaMask' : 'EVM Wallet');
-      alert(`${walletName} not detected! Please install the extension to continue.`);
-      const downloadUrl = providerType === 'okx' ? 'https://www.okx.com/web3' : 'https://metamask.io/download/';
-      window.open(downloadUrl, '_blank');
-      return;
-    }
-
-    setIsConnecting(true);
-    setShowWalletSelector(false);
-    
     try {
+      if (providerType === 'okx') {
+        provider = (window as any).okxwallet;
+      } else if (providerType === 'metamask') {
+        // Look for MetaMask specifically if multiple providers exist
+        const ethereum = (window as any).ethereum;
+        if (ethereum?.providers && Array.isArray(ethereum.providers)) {
+          provider = ethereum.providers.find((p: any) => p.isMetaMask);
+        } else if (ethereum?.isMetaMask) {
+          provider = ethereum;
+        }
+      } else {
+        provider = (window as any).ethereum;
+      }
+
+      if (!provider) {
+        alert(`${walletName} not detected! Please install the extension to continue.`);
+        const downloadUrl = providerType === 'okx' ? 'https://www.okx.com/web3' : 'https://metamask.io/download/';
+        window.open(downloadUrl, '_blank');
+        return;
+      }
+
+      setIsConnecting(true);
+      setShowWalletSelector(false);
+      
       const accounts = await provider.request({ method: 'eth_requestAccounts' });
       handleAccountsChanged(accounts);
       
@@ -126,9 +126,14 @@ const App: React.FC = () => {
       }
     } catch (error: any) {
       if (error.code === 4001) {
-        console.warn("User rejected the connection request.");
+        alert("Connection rejected. Please approve the request in your wallet.");
       } else {
         console.error("Wallet Connection Error:", error);
+        let errorMsg = `Failed to connect to ${walletName}: ${error.message || 'Unknown error'}. Please ensure your wallet is unlocked and try again.`;
+        if (window.self !== window.top) {
+          errorMsg += "\n\nNote: Browsers often block wallet connections in iframes. If this persists, try opening the app in a new tab.";
+        }
+        alert(errorMsg);
       }
     } finally {
       setIsConnecting(false);
@@ -175,13 +180,21 @@ const App: React.FC = () => {
   };
 
   const updateHighScore = (gameId: string, score: number) => {
-    // Reward Logic:
-    // 10 points if score reaches 5
-    // 50 points if score reaches 10
-    // Base reward: 2 points per game
-    let earnedPoints = 2;
-    if (score >= 10) earnedPoints += 50;
-    else if (score >= 5) earnedPoints += 10;
+    // Reward Logic: Normalized per game type
+    let earnedPoints = 2; // Base participation points
+
+    if (gameId === 'snake') {
+      // Snake: 10 points per food
+      if (score >= 1000) earnedPoints += 100; // 100 food
+      else if (score >= 500) earnedPoints += 50; // 50 food
+      else if (score >= 200) earnedPoints += 10; // 20 food
+    } else if (gameId === 'car-racing') {
+      // Velocity Racer: 1 point per lap
+      if (score >= 50) earnedPoints += 200; // Endurance master
+      else if (score >= 25) earnedPoints += 100; // Pro racer
+      else if (score >= 10) earnedPoints += 50; // Skilled racer
+      else if (score >= 3) earnedPoints += 10; // Beginner
+    }
 
     const newTotalPoints = points + earnedPoints;
     setPoints(newTotalPoints);

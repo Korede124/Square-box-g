@@ -13,20 +13,10 @@ export const GAMES: Game[] = [
     accentColor: 'green'
   },
   {
-    id: 'brick-box',
-    title: 'Brick Box',
-    description: 'Classic brick breaker. Smash blocks and clear the stage.',
-    thumbnail: 'https://picsum.photos/seed/brick/600/400',
-    category: 'Action',
-    isBuiltIn: true,
-    status: 'playable',
-    accentColor: 'blue'
-  },
-  {
     id: 'car-racing',
     title: 'Velocity Racer',
     description: 'Pseudo-3D F1 racing. Complete laps to earn points. High speed, high stakes.',
-    thumbnail: 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?q=80&w=2070&auto=format&fit=crop',
+    thumbnail: 'https://images.unsplash.com/photo-1676300185292-e23bb3db50ad?q=80&w=2070&auto=format&fit=crop',
     category: 'Racing',
     isBuiltIn: true,
     status: 'playable',

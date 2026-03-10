@@ -30,13 +30,13 @@ const Lobby: React.FC<LobbyProps> = ({ walletAddress, connectWallet }) => {
         {/* Partnership Background Image */}
         <div className="absolute inset-0 z-0">
           <img 
-            src="https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?q=80&w=2070&auto=format&fit=crop" 
-            alt="Partnership Background" 
-            className="w-full h-full object-cover"
+            src="https://images.unsplash.com/photo-1676300185292-e23bb3db50ad?q=80&w=2070&auto=format&fit=crop" 
+            alt="Pagani Utopia Background" 
+            className="w-full h-full object-cover opacity-60 scale-105 animate-pulse-slow"
             referrerPolicy="no-referrer"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black"></div>
-          <div className="absolute inset-0 bg-black/20"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black"></div>
+          <div className="absolute inset-0 bg-black/40"></div>
         </div>
 
         <div className="relative z-10 text-center px-4 max-w-5xl">
@@ -96,8 +96,8 @@ const Lobby: React.FC<LobbyProps> = ({ walletAddress, connectWallet }) => {
           <div className="grid grid-cols-1 lg:grid-cols-2">
             <div className="relative h-[300px] lg:h-auto overflow-hidden">
               <img 
-                src="https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?q=80&w=2070&auto=format&fit=crop" 
-                alt="Pagani Partnership" 
+                src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?q=80&w=2070&auto=format&fit=crop" 
+                alt="Pagani Huayra Partnership" 
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
               />

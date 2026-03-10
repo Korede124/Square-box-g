@@ -6,7 +6,6 @@ import { ChevronLeft, ShieldCheck, Zap, Cpu, Gamepad2, Wallet, Trophy, Maximize2
 import { GAMES } from '../constants';
 import { HighScore } from '../types';
 import SnakeGame from '../games/SnakeGame';
-import BrickBreaker from '../games/BrickBreaker';
 import CarRacing from '../games/CarRacing';
 
 interface GamePageProps {
@@ -126,8 +125,6 @@ const GamePage: React.FC<GamePageProps> = ({ updateHighScore, highScores, wallet
     switch (gameId) {
       case 'snake':
         return <SnakeGame onGameOver={handleGameOver} personalBest={userBest} walletAddress={walletAddress} onStart={() => setIsGameActive(true)} />;
-      case 'brick-box':
-        return <BrickBreaker onGameOver={handleGameOver} onStart={() => setIsGameActive(true)} />;
       case 'car-racing':
         return <CarRacing onGameOver={handleGameOver} onStart={() => setIsGameActive(true)} />;
       default:

@@ -39,6 +39,7 @@ const CarRacing: React.FC<CarRacingProps> = ({ onGameOver, onStart }) => {
   const [score, setScore] = useState(0); // Laps completed
   const [speed, setSpeed] = useState(0);
   const [lapTime, setLapTime] = useState(0);
+  const [shake, setShake] = useState(0);
   
   // Game state refs for the loop
   const position = useRef(0);
@@ -74,26 +75,31 @@ const CarRacing: React.FC<CarRacingProps> = ({ onGameOver, onStart }) => {
       for (let i = 0; i < leave; i++) addSegment(curve * (1 - i / leave));
     };
 
-    // Build a simple track
-    addRoad(50, 50, 50, 0); // Start
+    // Build a more complex track
+    addRoad(100, 100, 100, 0); // Start Straight
     addRoad(50, 50, 50, 2); // Easy right
     addRoad(50, 50, 50, -3); // Hard left
-    addRoad(50, 50, 50, 0); // Straight
-    addRoad(50, 50, 50, 5); // Very hard right
-    addRoad(50, 50, 50, -2); // Easy left
-    addRoad(50, 50, 50, 0); // End
+    addRoad(100, 100, 100, 0); // Long Straight
+    addRoad(50, 50, 50, 5); // Hairpin right
+    addRoad(50, 50, 50, -5); // Hairpin left
+    addRoad(100, 100, 100, 0); // Back Straight
+    addRoad(50, 50, 50, 2); // Final corner
+    addRoad(100, 100, 100, 0); // Finish Straight
 
     trackLength.current = newSegments.length * SEGMENT_LENGTH;
     segments.current = newSegments;
 
-    // Add some AI cars
-    for (let i = 0; i < 20; i++) {
+    // Add more AI cars with lane-changing behavior and different speeds
+    for (let i = 0; i < 40; i++) {
       const segIndex = Math.floor(Math.random() * (newSegments.length - 100)) + 50;
       newSegments[segIndex].cars.push({
         offset: Math.random() * 1.6 - 0.8,
         z: segIndex * SEGMENT_LENGTH,
-        speed: MAX_SPEED * 0.5 + Math.random() * MAX_SPEED * 0.3,
-        color: `hsl(${Math.random() * 360}, 70%, 50%)`
+        speed: MAX_SPEED * 0.4 + Math.random() * MAX_SPEED * 0.5,
+        color: i % 5 === 0 ? '#ff1e00' : (i % 3 === 0 ? '#004225' : '#ffffff'), // F1 Team Colors (Ferrari, Aston, etc)
+        laneChangeDir: Math.random() > 0.5 ? 1 : -1,
+        laneChangeTimer: Math.random() * 50,
+        isAggressive: Math.random() > 0.7
       });
     }
   };
@@ -132,8 +138,8 @@ const CarRacing: React.FC<CarRacingProps> = ({ onGameOver, onStart }) => {
     else if (keys.current['ArrowDown'] || keys.current['s']) playerSpeed.current += BREAKING * dt;
     else playerSpeed.current += DECEL * dt;
 
-    if (keys.current['ArrowLeft'] || keys.current['a']) playerX.current -= (dt * 2 * (playerSpeed.current / MAX_SPEED));
-    if (keys.current['ArrowRight'] || keys.current['d']) playerX.current += (dt * 2 * (playerSpeed.current / MAX_SPEED));
+    if (keys.current['ArrowLeft'] || keys.current['a']) playerX.current -= (dt * 2.5 * (playerSpeed.current / MAX_SPEED));
+    if (keys.current['ArrowRight'] || keys.current['d']) playerX.current += (dt * 2.5 * (playerSpeed.current / MAX_SPEED));
 
     // Off-road penalty
     if ((playerX.current < -1 || playerX.current > 1) && (playerSpeed.current > OFF_ROAD_LIMIT)) {
@@ -150,7 +156,7 @@ const CarRacing: React.FC<CarRacingProps> = ({ onGameOver, onStart }) => {
       setScore(s => s + 1); // Lap completed
     }
     
-    setSpeed(Math.floor((playerSpeed.current / MAX_SPEED) * 320));
+    setSpeed(Math.floor((playerSpeed.current / MAX_SPEED) * 340)); // F1 top speed ~340km/h
 
     // Update AI Cars
     segments.current.forEach(seg => {
@@ -158,11 +164,32 @@ const CarRacing: React.FC<CarRacingProps> = ({ onGameOver, onStart }) => {
         car.z += car.speed * dt;
         if (car.z >= trackLength.current) car.z -= trackLength.current;
         
+        // AI Lane changing & Aggression
+        car.laneChangeTimer -= dt * (car.isAggressive ? 20 : 10);
+        if (car.laneChangeTimer <= 0) {
+          car.laneChangeDir *= -1;
+          car.laneChangeTimer = (car.isAggressive ? 20 : 50) + Math.random() * 100;
+        }
+        
+        // AI tries to block player if aggressive
+        if (car.isAggressive && Math.abs(car.z - position.current) < SEGMENT_LENGTH * 5) {
+          const targetOffset = playerX.current;
+          car.offset += (targetOffset - car.offset) * 0.5 * dt;
+        } else {
+          car.offset += car.laneChangeDir * 0.3 * dt;
+        }
+        
+        car.offset = Math.max(-0.85, Math.min(0.85, car.offset));
+
         // Collision detection
-        if (Math.abs(car.z - position.current) < SEGMENT_LENGTH && Math.abs(car.offset - playerX.current) < 0.4) {
+        if (Math.abs(car.z - position.current) < SEGMENT_LENGTH && Math.abs(car.offset - playerX.current) < 0.3) {
           if (playerSpeed.current > car.speed) {
             setGameState('GAMEOVER');
             onGameOver(score);
+          } else {
+            // Rear-ended by AI or side-swipe
+            playerSpeed.current *= 0.7;
+            setShake(15);
           }
         }
       });
@@ -170,7 +197,7 @@ const CarRacing: React.FC<CarRacingProps> = ({ onGameOver, onStart }) => {
 
     // Centrifugal force in curves
     const playerSegment = findSegment(position.current);
-    playerX.current -= (dt * 2 * (playerSpeed.current / MAX_SPEED) * playerSegment.curve * 0.02);
+    playerX.current -= (dt * 3 * (playerSpeed.current / MAX_SPEED) * playerSegment.curve * 0.02);
   };
 
   const draw = () => {
@@ -180,6 +207,12 @@ const CarRacing: React.FC<CarRacingProps> = ({ onGameOver, onStart }) => {
 
     const width = canvas.width;
     const height = canvas.height;
+
+    ctx.save();
+    if (shake > 0) {
+      ctx.translate((Math.random() - 0.5) * shake, (Math.random() - 0.5) * shake);
+      setShake(s => Math.max(0, s - 1));
+    }
 
     ctx.clearRect(0, 0, width, height);
 
@@ -258,10 +291,13 @@ const CarRacing: React.FC<CarRacingProps> = ({ onGameOver, onStart }) => {
         const carW = 400 * scale * width / 2;
         const carH = 200 * scale * width / 2;
 
+        // Car Body
         ctx.fillStyle = car.color;
         ctx.fillRect(destX - carW/2, destY - carH, carW, carH);
-        // Wheels
+        // Rear Wing
         ctx.fillStyle = '#000';
+        ctx.fillRect(destX - carW/2, destY - carH - 10, carW, 5);
+        // Wheels
         ctx.fillRect(destX - carW/2 - 5, destY - carH/2, 10, carH/2);
         ctx.fillRect(destX + carW/2 - 5, destY - carH/2, 10, carH/2);
       });
@@ -269,35 +305,55 @@ const CarRacing: React.FC<CarRacingProps> = ({ onGameOver, onStart }) => {
 
     // Draw Player Car (Static at bottom)
     const bounce = (Math.random() * 2) * (playerSpeed.current / MAX_SPEED);
-    const pWidth = 80;
-    const pHeight = 40;
     const pX = width / 2;
     const pY = height - 100 + bounce;
 
-    // F1 Car Body
+    // F1 Car Body (Detailed)
     ctx.fillStyle = '#00f2ff';
     ctx.shadowBlur = 15;
     ctx.shadowColor = '#00f2ff';
+    
+    // Main chassis
     ctx.beginPath();
-    ctx.moveTo(pX - 30, pY);
-    ctx.lineTo(pX + 30, pY);
-    ctx.lineTo(pX + 20, pY - 60);
-    ctx.lineTo(pX - 20, pY - 60);
+    ctx.moveTo(pX - 25, pY);
+    ctx.lineTo(pX + 25, pY);
+    ctx.lineTo(pX + 15, pY - 80);
+    ctx.lineTo(pX - 15, pY - 80);
     ctx.closePath();
     ctx.fill();
     ctx.shadowBlur = 0;
 
+    // Sidepods
+    ctx.fillStyle = '#00a3ad';
+    ctx.fillRect(pX - 35, pY - 40, 15, 30);
+    ctx.fillRect(pX + 20, pY - 40, 15, 30);
+
     // Front Wing
     ctx.fillStyle = '#111';
-    ctx.fillRect(pX - 50, pY - 10, 100, 10);
+    ctx.fillRect(pX - 60, pY - 15, 120, 12);
     // Rear Wing
-    ctx.fillRect(pX - 40, pY - 70, 80, 10);
-    // Wheels
+    ctx.fillRect(pX - 50, pY - 90, 100, 15);
+    // Rear Wing endplates
+    ctx.fillRect(pX - 50, pY - 95, 5, 20);
+    ctx.fillRect(pX + 45, pY - 95, 5, 20);
+
+    // Wheels (Detailed)
     ctx.fillStyle = '#000';
-    ctx.fillRect(pX - 55, pY - 20, 15, 30);
-    ctx.fillRect(pX + 40, pY - 20, 15, 30);
-    ctx.fillRect(pX - 45, pY - 65, 12, 25);
-    ctx.fillRect(pX + 33, pY - 65, 12, 25);
+    // Rear wheels
+    ctx.fillRect(pX - 65, pY - 30, 20, 40);
+    ctx.fillRect(pX + 45, pY - 30, 20, 40);
+    // Front wheels
+    ctx.fillRect(pX - 55, pY - 85, 15, 30);
+    ctx.fillRect(pX + 40, pY - 85, 15, 30);
+
+    // Halo
+    ctx.strokeStyle = '#222';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(pX, pY - 50, 15, Math.PI, 0);
+    ctx.stroke();
+
+    ctx.restore();
   };
 
   const loop = (time: number) => {
@@ -346,23 +402,42 @@ const CarRacing: React.FC<CarRacingProps> = ({ onGameOver, onStart }) => {
       />
 
       {/* HUD */}
-      <div className="absolute top-8 left-8 z-10 space-y-1">
-        <div className="flex items-center space-x-2">
-          <Zap className="w-4 h-4 text-cyan-400 fill-cyan-400" />
-          <span className="text-white/40 text-[10px] font-black uppercase tracking-widest">Velocity</span>
+      <div className="absolute top-8 left-8 z-10 space-y-4">
+        <div className="space-y-1">
+          <div className="flex items-center space-x-2">
+            <Zap className="w-4 h-4 text-cyan-400 fill-cyan-400" />
+            <span className="text-white/40 text-[10px] font-black uppercase tracking-widest">Velocity</span>
+          </div>
+          <div className="font-orbitron text-4xl font-black text-white italic">
+            {speed}<span className="text-xs ml-1 text-white/40 not-italic">KM/H</span>
+          </div>
         </div>
-        <div className="font-orbitron text-4xl font-black text-white italic">
-          {speed}<span className="text-xs ml-1 text-white/40 not-italic">KM/H</span>
+        
+        <div className="space-y-1">
+          <div className="text-white/40 text-[10px] font-black uppercase tracking-widest">Tire Temp</div>
+          <div className="flex space-x-1">
+            <div className={`h-1 w-8 rounded-full ${speed > 300 ? 'bg-red-500' : 'bg-emerald-500'}`}></div>
+            <div className={`h-1 w-8 rounded-full ${speed > 300 ? 'bg-red-500' : 'bg-emerald-500'}`}></div>
+          </div>
         </div>
       </div>
 
-      <div className="absolute top-8 right-8 z-10 text-right space-y-1">
-        <div className="flex items-center justify-end space-x-2">
-          <span className="text-white/40 text-[10px] font-black uppercase tracking-widest">Laps Completed</span>
-          <Trophy className="w-4 h-4 text-yellow-500" />
+      <div className="absolute top-8 right-8 z-10 text-right space-y-4">
+        <div className="space-y-1">
+          <div className="flex items-center justify-end space-x-2">
+            <span className="text-white/40 text-[10px] font-black uppercase tracking-widest">Laps Completed</span>
+            <Trophy className="w-4 h-4 text-yellow-500" />
+          </div>
+          <div className="font-orbitron text-4xl font-black text-white italic">
+            {score}
+          </div>
         </div>
-        <div className="font-orbitron text-4xl font-black text-white italic">
-          {score}
+
+        <div className="space-y-1">
+          <div className="text-white/40 text-[10px] font-black uppercase tracking-widest">ERS Charge</div>
+          <div className="h-1.5 w-32 bg-white/10 rounded-full overflow-hidden ml-auto">
+            <div className="h-full bg-cyan-400 animate-pulse" style={{ width: '85%' }}></div>
+          </div>
         </div>
       </div>
 
