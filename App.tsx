@@ -11,6 +11,7 @@ import Profile from './pages/Profile';
 import Logo from './components/Logo';
 import SplashScreen from './components/SplashScreen';
 import MusicPlayer from './components/MusicPlayer';
+import WalletSelector from './components/WalletSelector';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -18,6 +19,7 @@ const App: React.FC = () => {
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [points, setPoints] = useState<number>(0);
   const [isConnecting, setIsConnecting] = useState(false);
+  const [showWalletSelector, setShowWalletSelector] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
@@ -78,18 +80,48 @@ const App: React.FC = () => {
     };
   }, [handleAccountsChanged]);
 
-  const connectWallet = async () => {
-    const ethereum = (window as any).ethereum;
-    if (!ethereum) {
-      alert("EVM Wallet not detected! Please install an EVM-compatible wallet like MetaMask or OXN Wallet to access the arcade.");
-      window.open('https://metamask.io/download/', '_blank');
+  const connectWallet = async (providerType?: 'metamask' | 'okx' | 'injected') => {
+    if (!providerType) {
+      setShowWalletSelector(true);
+      return;
+    }
+
+    let provider: any = null;
+
+    if (providerType === 'okx') {
+      provider = (window as any).okxwallet;
+    } else if (providerType === 'metamask') {
+      // Look for MetaMask specifically if multiple providers exist
+      const ethereum = (window as any).ethereum;
+      if (ethereum?.providers) {
+        provider = ethereum.providers.find((p: any) => p.isMetaMask);
+      } else if (ethereum?.isMetaMask) {
+        provider = ethereum;
+      }
+    } else {
+      provider = (window as any).ethereum;
+    }
+
+    if (!provider) {
+      const walletName = providerType === 'okx' ? 'OKX Wallet' : (providerType === 'metamask' ? 'MetaMask' : 'EVM Wallet');
+      alert(`${walletName} not detected! Please install the extension to continue.`);
+      const downloadUrl = providerType === 'okx' ? 'https://www.okx.com/web3' : 'https://metamask.io/download/';
+      window.open(downloadUrl, '_blank');
       return;
     }
 
     setIsConnecting(true);
+    setShowWalletSelector(false);
+    
     try {
-      const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+      const accounts = await provider.request({ method: 'eth_requestAccounts' });
       handleAccountsChanged(accounts);
+      
+      // Listen for changes on the specific provider
+      if (provider.on) {
+        provider.on('accountsChanged', handleAccountsChanged);
+        provider.on('chainChanged', () => window.location.reload());
+      }
     } catch (error: any) {
       if (error.code === 4001) {
         console.warn("User rejected the connection request.");
@@ -251,6 +283,12 @@ const App: React.FC = () => {
       </main>
 
       <MusicPlayer isMuted={isMuted} toggleMute={toggleMute} user={user} />
+
+      <WalletSelector 
+        isOpen={showWalletSelector} 
+        onClose={() => setShowWalletSelector(false)} 
+        onSelect={(type) => connectWallet(type)} 
+      />
 
       {/* Footer */}
       <footer className="bg-black border-t border-white/5 py-16 px-6">
