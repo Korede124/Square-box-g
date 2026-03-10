@@ -12,6 +12,7 @@ import Logo from './components/Logo';
 import SplashScreen from './components/SplashScreen';
 import MusicPlayer from './components/MusicPlayer';
 import WalletSelector from './components/WalletSelector';
+import WithdrawModal from './components/WithdrawModal';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -21,6 +22,7 @@ const App: React.FC = () => {
   const [isConnecting, setIsConnecting] = useState(false);
   const [showWalletSelector, setShowWalletSelector] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const location = useLocation();
@@ -161,6 +163,17 @@ const App: React.FC = () => {
     localStorage.removeItem('sqb_user');
   };
 
+  const handleWithdraw = (amount: number, pointsUsed: number) => {
+    const newPoints = points - pointsUsed;
+    setPoints(newPoints);
+    localStorage.setItem('sqb_points', newPoints.toString());
+    if (user) {
+      const updatedUser = { ...user, points: newPoints };
+      setUser(updatedUser);
+      localStorage.setItem('sqb_user', JSON.stringify(updatedUser));
+    }
+  };
+
   const updateHighScore = (gameId: string, score: number) => {
     // Reward Logic:
     // 10 points if score reaches 5
@@ -224,6 +237,13 @@ const App: React.FC = () => {
           <div className="hidden lg:flex space-x-8">
             <Link to="/" className={`font-orbitron text-xs font-bold uppercase tracking-widest transition-all ${location.pathname === '/' ? 'text-cyan-400' : 'text-white/40 hover:text-white'}`}>Home</Link>
             <Link to="/leaderboard" className={`font-orbitron text-xs font-bold uppercase tracking-widest transition-all ${location.pathname === '/leaderboard' ? 'text-cyan-400' : 'text-white/40 hover:text-white'}`}>Leaderboard</Link>
+            <button 
+              onClick={() => setShowWithdrawModal(true)}
+              className="font-orbitron text-xs font-bold uppercase tracking-widest text-emerald-400 hover:text-emerald-300 transition-all flex items-center space-x-2"
+            >
+              <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span>
+              <span>Payment</span>
+            </button>
           </div>
         </div>
 
@@ -277,7 +297,7 @@ const App: React.FC = () => {
             <Route path="/" element={<Lobby walletAddress={walletAddress} connectWallet={connectWallet} />} />
             <Route path="/game/:gameId" element={<GamePage updateHighScore={updateHighScore} highScores={highScores} walletAddress={walletAddress} connectWallet={connectWallet} points={points} />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
-            <Route path="/profile" element={<Profile user={user} highScores={highScores} walletAddress={walletAddress} points={points} onUpdateProfile={handleUpdateProfile} />} />
+            <Route path="/profile" element={<Profile user={user} highScores={highScores} walletAddress={walletAddress} points={points} onUpdateProfile={handleUpdateProfile} onOpenWithdraw={() => setShowWithdrawModal(true)} />} />
           </Routes>
         </AnimatePresence>
       </main>
@@ -288,6 +308,13 @@ const App: React.FC = () => {
         isOpen={showWalletSelector} 
         onClose={() => setShowWalletSelector(false)} 
         onSelect={(type) => connectWallet(type)} 
+      />
+
+      <WithdrawModal 
+        isOpen={showWithdrawModal}
+        onClose={() => setShowWithdrawModal(false)}
+        currentPoints={points}
+        onWithdraw={handleWithdraw}
       />
 
       {/* Footer */}

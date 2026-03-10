@@ -12,9 +12,10 @@ interface ProfileProps {
   walletAddress: string | null;
   points: number;
   onUpdateProfile: (username: string, avatar: string) => void;
+  onOpenWithdraw: () => void;
 }
 
-const Profile: React.FC<ProfileProps> = ({ user, highScores, walletAddress, points, onUpdateProfile }) => {
+const Profile: React.FC<ProfileProps> = ({ user, highScores, walletAddress, points, onUpdateProfile, onOpenWithdraw }) => {
   const [isEditing, setIsEditing] = React.useState(false);
   const [editName, setEditName] = React.useState(user?.username || '');
   const [editAvatar, setEditAvatar] = React.useState(user?.avatar || '');
@@ -175,7 +176,7 @@ const Profile: React.FC<ProfileProps> = ({ user, highScores, walletAddress, poin
             <div className="col-span-2 mt-4">
               <button 
                 disabled={points < 1000 || !walletAddress}
-                onClick={() => alert(`Withdrawal of $${usdValue.toFixed(2)} (${points} points) initiated to ${walletAddress}. Processed weekly.`)}
+                onClick={onOpenWithdraw}
                 className={`w-full py-3 rounded-xl font-orbitron font-black text-[10px] uppercase tracking-[0.2em] transition-all ${
                   points >= 1000 && walletAddress
                   ? 'bg-green-500 text-black shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:scale-[1.02] active:scale-95'
