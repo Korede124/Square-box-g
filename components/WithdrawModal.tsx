@@ -16,7 +16,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose, currentP
   const [error, setError] = useState<string | null>(null);
 
   const MIN_POINTS = 1000;
-  const CONVERSION_RATE = 0.01; // 1000 points = $10
+  const CONVERSION_RATE = 0.0002; // 1000 points = $0.20
 
   const handleWithdraw = () => {
     if (currentPoints < MIN_POINTS) {
