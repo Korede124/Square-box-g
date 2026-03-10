@@ -74,25 +74,6 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
           transition={{ delay: 1.5, duration: 1 }}
           className="mb-16 space-y-6"
         >
-          <div className="relative w-full max-w-lg mx-auto aspect-video rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
-            <img 
-              src="https://storage.googleapis.com/test-full-stack-apps/ct6b44ynmdawtk2ywyz42c/1741606692257.png" 
-              alt="Partnership" 
-              className="w-full h-full object-cover"
-              referrerPolicy="no-referrer"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-            <div className="absolute bottom-4 left-6 right-6 flex justify-between items-end">
-              <div className="text-left">
-                <div className="text-[8px] font-orbitron font-black text-white/40 uppercase tracking-widest mb-1">Strategic Asset</div>
-                <div className="text-xs font-orbitron font-black text-white uppercase tracking-tighter">PAGANI X SQUARE BOX</div>
-              </div>
-              <div className="px-3 py-1 bg-cyan-500/20 border border-cyan-500/50 rounded-full">
-                <span className="text-[8px] font-orbitron font-black text-cyan-400 uppercase tracking-widest">Verified</span>
-              </div>
-            </div>
-          </div>
-
           <div className="text-[10px] font-orbitron font-black text-white/20 tracking-[0.3em] uppercase">
             Official Partners
           </div>

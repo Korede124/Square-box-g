@@ -30,7 +30,7 @@ const Lobby: React.FC<LobbyProps> = ({ walletAddress, connectWallet }) => {
         {/* Partnership Background Image */}
         <div className="absolute inset-0 z-0">
           <img 
-            src="https://storage.googleapis.com/test-full-stack-apps/ct6b44ynmdawtk2ywyz42c/1741606692257.png" 
+            src="https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?q=80&w=2070&auto=format&fit=crop" 
             alt="Partnership Background" 
             className="w-full h-full object-cover"
             referrerPolicy="no-referrer"
@@ -96,7 +96,7 @@ const Lobby: React.FC<LobbyProps> = ({ walletAddress, connectWallet }) => {
           <div className="grid grid-cols-1 lg:grid-cols-2">
             <div className="relative h-[300px] lg:h-auto overflow-hidden">
               <img 
-                src="https://storage.googleapis.com/test-full-stack-apps/ct6b44ynmdawtk2ywyz42c/1741606692257.png" 
+                src="https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?q=80&w=2070&auto=format&fit=crop" 
                 alt="Pagani Partnership" 
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
