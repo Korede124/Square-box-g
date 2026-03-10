@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
+import { Volume2, VolumeX } from 'lucide-react';
 import { User, HighScore } from './types';
 import Lobby from './pages/Lobby';
 import GamePage from './pages/GamePage';
@@ -18,7 +19,49 @@ const App: React.FC = () => {
   const [isConnecting, setIsConnecting] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+  const audioRef = React.useRef<HTMLAudioElement | null>(null);
   const location = useLocation();
+
+  useEffect(() => {
+    // Initialize audio
+    audioRef.current = new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_c8c8a7351b.mp3');
+    audioRef.current.loop = true;
+    audioRef.current.volume = 0.3;
+
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!audioRef.current) return;
+
+    const isLobby = location.pathname === '/';
+    const isGame = location.pathname.startsWith('/game/');
+    const shouldPlay = (isLobby || isGame) && user !== null;
+
+    if (shouldPlay && !isMuted) {
+      audioRef.current.play().catch(err => console.log("Autoplay blocked or failed:", err));
+    } else {
+      audioRef.current.pause();
+    }
+  }, [location.pathname, user, isMuted]);
+
+  const toggleMute = () => {
+    setIsMuted(!isMuted);
+    // If unmuting, try to play immediately if we're in the right place
+    if (isMuted && audioRef.current) {
+      const isLobby = location.pathname === '/';
+      const isGame = location.pathname.startsWith('/game/');
+      if (isLobby || isGame) {
+        audioRef.current.play().catch(err => console.log("Play failed:", err));
+      }
+    }
+  };
 
   useEffect(() => {
     const checkMobile = () => {
@@ -189,6 +232,15 @@ const App: React.FC = () => {
         </div>
 
         <div className="flex items-center space-x-4 lg:space-x-6">
+          {/* Music Toggle */}
+          <button 
+            onClick={toggleMute}
+            className="p-2.5 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 text-white/40 hover:text-cyan-400 transition-all group"
+            title={isMuted ? "Unmute Music" : "Mute Music"}
+          >
+            {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 animate-pulse" />}
+          </button>
+
           {/* Wallet Status / Connect Button */}
           {!isMobile && (
             <button 
