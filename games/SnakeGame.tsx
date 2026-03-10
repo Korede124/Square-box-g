@@ -123,13 +123,15 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onGameOver, personalBest, walletA
     const moveSnake = () => {
       const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
 
-      // Wall collision
-      if (head.x < 0 || head.x >= CANVAS_SIZE / GRID_SIZE || head.y < 0 || head.y >= CANVAS_SIZE / GRID_SIZE) {
-        setIsGameOver(true);
-        setShake(10);
-        onGameOver(score);
-        return;
-      }
+      // Wrap around walls
+      const gridWidth = CANVAS_SIZE / GRID_SIZE;
+      const gridHeight = CANVAS_SIZE / GRID_SIZE;
+      
+      if (head.x < 0) head.x = gridWidth - 1;
+      else if (head.x >= gridWidth) head.x = 0;
+      
+      if (head.y < 0) head.y = gridHeight - 1;
+      else if (head.y >= gridHeight) head.y = 0;
 
       // Self collision
       if (snake.some(segment => segment.x === head.x && segment.y === head.y)) {
