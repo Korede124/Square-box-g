@@ -553,7 +553,7 @@ const CarRacing: React.FC<CarRacingProps> = ({ onGameOver, onStart }) => {
             <Trophy className="w-4 h-4 text-yellow-500" />
           </div>
           <div className="font-orbitron text-4xl font-black text-white italic">
-            {Math.floor(score / 10)}<span className="text-xs ml-1 text-white/40 not-italic">PTS</span>
+            {Math.floor(score / 200)}<span className="text-xs ml-1 text-white/40 not-italic">PTS</span>
           </div>
         </div>
 
@@ -643,7 +643,7 @@ const CarRacing: React.FC<CarRacingProps> = ({ onGameOver, onStart }) => {
                   {gameState === 'GAMEOVER' ? 'Final Classification' : 'Grand Prix Briefing'}
                 </div>
                 <div className="text-3xl font-orbitron font-black text-white">
-                  {Math.floor(score / 10)} <span className="text-xs text-white/40 uppercase tracking-widest">Points Earned</span>
+                  {Math.floor(score / 200)} <span className="text-xs text-white/40 uppercase tracking-widest">Points Earned</span>
                 </div>
                 <div className="text-xl font-orbitron font-black text-white/60 mt-2">
                   {score} <span className="text-xs text-white/40 uppercase tracking-widest">Meters Traveled</span>

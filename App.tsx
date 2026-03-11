@@ -201,13 +201,13 @@ const App: React.FC = () => {
       else if (score >= 500) earnedPoints += 50; // 50 food
       else if (score >= 200) earnedPoints += 10; // 20 food
     } else if (gameId === 'car-racing') {
-      // Velocity Racer: 1 point per 10 meters
-      earnedPoints += Math.floor(score / 10);
+      // Velocity Racer: 5 points per 1km (1 point per 200 meters)
+      earnedPoints += Math.floor(score / 200);
       
       // Bonus for significant distances
-      if (score >= 5000) earnedPoints += 500; // Endurance master (5km)
-      else if (score >= 2000) earnedPoints += 200; // Pro racer (2km)
-      else if (score >= 1000) earnedPoints += 100; // Skilled racer (1km)
+      if (score >= 5000) earnedPoints += 25; // 5km bonus
+      else if (score >= 2000) earnedPoints += 10; // 2km bonus
+      else if (score >= 1000) earnedPoints += 5; // 1km bonus
     }
 
     const newTotalPoints = points + earnedPoints;
