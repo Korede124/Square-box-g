@@ -7,37 +7,47 @@ interface WithdrawModalProps {
   isOpen: boolean;
   onClose: () => void;
   currentPoints: number;
-  onWithdraw: (amount: number, pointsUsed: number) => void;
+  walletAddress: string | null;
+  onWithdraw: (amount: number, pointsUsed: number, destination: string) => void;
 }
 
-const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose, currentPoints, onWithdraw }) => {
-  const [step, setStep] = useState<'input' | 'processing' | 'success'>('input');
+const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose, currentPoints, walletAddress, onWithdraw }) => {
+  const [step, setStep] = useState<'input' | 'authorize' | 'processing' | 'success'>('input');
   const [withdrawAmount, setWithdrawAmount] = useState<number>(1000);
+  const [destinationAddress, setDestinationAddress] = useState<string>(walletAddress || '');
   const [error, setError] = useState<string | null>(null);
 
   const MIN_POINTS = 1000;
   const CONVERSION_RATE = 0.0002; // 1000 points = $0.20
 
-  const handleWithdraw = () => {
+  const handleNextStep = () => {
     if (currentPoints < MIN_POINTS) {
-      setError(`Minimum withdrawal is ${MIN_POINTS} points.`);
+      setError(`Minimum withdrawal is ${MIN_POINTS} SBG Points.`);
       return;
     }
     if (withdrawAmount < MIN_POINTS) {
-      setError(`Minimum withdrawal is ${MIN_POINTS} points.`);
+      setError(`Minimum withdrawal is ${MIN_POINTS} SBG Points.`);
       return;
     }
     if (withdrawAmount > currentPoints) {
-      setError("You don't have enough points.");
+      setError("You don't have enough SBG Points.");
+      return;
+    }
+    if (!destinationAddress || !destinationAddress.startsWith('0x')) {
+      setError("Please enter a valid EVM wallet address.");
       return;
     }
 
     setError(null);
+    setStep('authorize');
+  };
+
+  const handleAuthorize = () => {
     setStep('processing');
 
     // Simulate real-time withdrawal
     setTimeout(() => {
-      onWithdraw(withdrawAmount * CONVERSION_RATE, withdrawAmount);
+      onWithdraw(withdrawAmount * CONVERSION_RATE, withdrawAmount, destinationAddress);
       setStep('success');
     }, 2500);
   };
@@ -85,7 +95,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose, currentP
                   <div className="bg-white/5 p-6 rounded-2xl border border-white/5">
                     <div className="flex justify-between items-end mb-2">
                       <span className="text-[10px] font-black text-white/30 uppercase tracking-widest">Available Balance</span>
-                      <span className="text-xs font-orbitron font-black text-cyan-400">{currentPoints.toLocaleString()} PTS</span>
+                      <span className="text-xs font-orbitron font-black text-cyan-400">{currentPoints.toLocaleString()} SBG</span>
                     </div>
                     <div className="text-3xl font-orbitron font-black text-white">
                       ${(currentPoints * CONVERSION_RATE).toFixed(2)}
@@ -93,7 +103,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose, currentP
                   </div>
 
                   <div className="space-y-4">
-                    <label className="block text-[10px] font-black text-white/30 uppercase tracking-widest">Amount to Withdraw (Points)</label>
+                    <label className="block text-[10px] font-black text-white/30 uppercase tracking-widest">Amount to Withdraw (SBG Points)</label>
                     <div className="relative">
                       <input
                         type="number"
@@ -103,12 +113,23 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose, currentP
                         onChange={(e) => setWithdrawAmount(parseInt(e.target.value) || 0)}
                         className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white font-orbitron font-black focus:outline-none focus:border-emerald-500/50 transition-all"
                       />
-                      <div className="absolute right-6 top-1/2 -translate-y-1/2 text-[10px] font-black text-white/20 uppercase">PTS</div>
+                      <div className="absolute right-6 top-1/2 -translate-y-1/2 text-[10px] font-black text-white/20 uppercase">SBG</div>
                     </div>
                     <div className="flex justify-between text-[10px] font-bold text-white/40 uppercase tracking-widest">
-                      <span>Min: {MIN_POINTS} PTS</span>
+                      <span>Min: {MIN_POINTS} SBG</span>
                       <span>Value: ${(withdrawAmount * CONVERSION_RATE).toFixed(2)} USD</span>
                     </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <label className="block text-[10px] font-black text-white/30 uppercase tracking-widest">Destination EVM Wallet</label>
+                    <input
+                      type="text"
+                      placeholder="0x..."
+                      value={destinationAddress}
+                      onChange={(e) => setDestinationAddress(e.target.value)}
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white font-mono text-xs focus:outline-none focus:border-cyan-500/50 transition-all"
+                    />
                   </div>
 
                   {error && (
@@ -119,20 +140,50 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose, currentP
                   )}
 
                   <button
-                    onClick={handleWithdraw}
-                    disabled={currentPoints < MIN_POINTS}
+                    onClick={handleNextStep}
+                    disabled={currentPoints < MIN_POINTS || !walletAddress}
                     className="w-full group relative bg-emerald-600 hover:bg-emerald-500 disabled:bg-white/5 disabled:text-white/20 text-white font-orbitron font-black py-5 rounded-2xl transition-all active:scale-95 overflow-hidden"
                   >
                     <span className="relative z-10 flex items-center justify-center space-x-3">
                       <CreditCard className="w-5 h-5" />
-                      <span>WITHDRAW TO ACCOUNT</span>
+                      <span>CONTINUE TO AUTHORIZE</span>
                     </span>
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                   </button>
 
                   <p className="text-center text-[9px] font-bold text-white/20 uppercase tracking-widest leading-relaxed">
-                    Real-time processing via EVM Protocol. Funds will be deposited directly to your linked account.
+                    {!walletAddress ? "PLEASE CONNECT YOUR WALLET TO WITHDRAW." : "Real-time processing via EVM Protocol. Funds will be deposited directly to the specified account."}
                   </p>
+                </div>
+              )}
+
+              {step === 'authorize' && (
+                <div className="py-8 space-y-8 animate-in fade-in zoom-in duration-300">
+                  <div className="bg-yellow-500/10 border border-yellow-500/30 p-6 rounded-3xl text-center">
+                    <AlertCircle className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
+                    <h4 className="text-white font-orbitron font-black uppercase mb-2">Authorization Required</h4>
+                    <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest leading-relaxed">
+                      You are about to authorize the withdrawal of <span className="text-white">{withdrawAmount.toLocaleString()} SBG Points</span> (${(withdrawAmount * CONVERSION_RATE).toFixed(2)}) to the following address:
+                    </p>
+                    <div className="mt-4 p-3 bg-black/40 rounded-xl font-mono text-[10px] text-cyan-400 break-all border border-white/5">
+                      {destinationAddress}
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <button
+                      onClick={handleAuthorize}
+                      className="w-full bg-white text-black font-orbitron font-black py-5 rounded-2xl transition-all hover:scale-105 active:scale-95 uppercase tracking-[0.3em]"
+                    >
+                      AUTHORIZE TRANSACTION
+                    </button>
+                    <button
+                      onClick={() => setStep('input')}
+                      className="w-full text-white/40 font-orbitron font-black py-3 rounded-2xl text-[10px] uppercase tracking-widest hover:text-white transition-colors"
+                    >
+                      CANCEL & EDIT
+                    </button>
+                  </div>
                 </div>
               )}
 

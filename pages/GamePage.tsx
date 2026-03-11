@@ -319,7 +319,7 @@ const GamePage: React.FC<GamePageProps> = ({ updateHighScore, highScores, wallet
                     </div>
                     <div className="h-px w-32 bg-white/10 mb-6"></div>
                     <div className="text-yellow-400 font-orbitron font-black text-5xl animate-pulse shadow-yellow-500/20 drop-shadow-[0_0_15px_rgba(234,179,8,0.5)]">
-                      +{pointsWon} POINTS
+                      +{pointsWon} SBG
                     </div>
                     <p className="mt-6 text-[10px] font-black text-white/20 uppercase tracking-widest">Rewards added to your vault</p>
                     

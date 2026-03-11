@@ -274,7 +274,7 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onGameOver, personalBest, walletA
       {/* HUD */}
       <div className="absolute top-8 left-8 z-10 flex space-x-12">
         <div className="flex flex-col group">
-          <span className="text-cyan-400/30 text-[10px] font-black uppercase tracking-[0.3em]">Score Matrix</span>
+          <span className="text-cyan-400/30 text-[10px] font-black uppercase tracking-[0.3em]">SBG Matrix</span>
           <span className="text-white text-4xl font-black transition-transform group-hover:scale-110">{score.toLocaleString()}</span>
         </div>
         
@@ -341,7 +341,7 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onGameOver, personalBest, walletA
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-6 w-full mb-12">
               <div className="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center border-white/5">
-                <span className="text-white/20 text-[9px] font-black uppercase tracking-widest mb-1">Final Score</span>
+                <span className="text-white/20 text-[9px] font-black uppercase tracking-widest mb-1">Final SBG</span>
                 <span className={`text-2xl font-black ${isGameOver ? 'text-white' : 'text-cyan-400'}`}>{score.toLocaleString()}</span>
               </div>
               <div className="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center border-white/5">

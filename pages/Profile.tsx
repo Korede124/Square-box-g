@@ -51,7 +51,7 @@ const Profile: React.FC<ProfileProps> = ({ user, highScores, walletAddress, poin
 
   const stats = [
     { label: 'Total Score', value: user.totalScore.toLocaleString(), color: 'text-cyan-400' },
-    { label: 'Gaming Points', value: points.toLocaleString(), color: 'text-yellow-400' },
+    { label: 'SBG Points', value: points.toLocaleString(), color: 'text-yellow-400' },
     { label: 'Network', value: walletAddress ? 'Linked' : 'Offline', color: walletAddress ? 'text-green-400' : 'text-orange-400' },
     { label: 'Ranking', value: '#1,248', color: 'text-emerald-400' },
   ];
@@ -183,7 +183,7 @@ const Profile: React.FC<ProfileProps> = ({ user, highScores, walletAddress, poin
                   : 'bg-white/5 text-white/20 cursor-not-allowed border border-white/5'
                 }`}
               >
-                {points < 1000 ? 'MIN 1,000 PTS TO WITHDRAW' : !walletAddress ? 'CONNECT WALLET TO WITHDRAW' : `WITHDRAW $${usdValue.toFixed(2)}`}
+                {points < 1000 ? 'MIN 1,000 SBG TO WITHDRAW' : !walletAddress ? 'CONNECT WALLET TO WITHDRAW' : `WITHDRAW $${usdValue.toFixed(2)}`}
               </button>
             </div>
           </div>
@@ -210,7 +210,7 @@ const Profile: React.FC<ProfileProps> = ({ user, highScores, walletAddress, poin
                   <div className="text-right flex flex-col items-end">
                     <div className="text-[10px] font-orbitron font-bold text-cyan-400 uppercase tracking-widest mb-1">Signed High Score</div>
                     <div className="font-orbitron font-black text-2xl text-white">{score.score.toLocaleString()}</div>
-                    <div className="text-[10px] font-bold text-yellow-400 uppercase tracking-widest mt-1">+{score.pointsEarned || 0} PTS</div>
+                    <div className="text-[10px] font-bold text-yellow-400 uppercase tracking-widest mt-1">+{score.pointsEarned || 0} SBG</div>
                   </div>
                 </div>
               );

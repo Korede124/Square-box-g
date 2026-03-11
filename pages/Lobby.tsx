@@ -47,7 +47,7 @@ const Lobby: React.FC<LobbyProps> = ({ walletAddress, connectWallet }) => {
             className="inline-flex items-center space-x-3 px-6 py-2 rounded-full border border-cyan-500/50 bg-black/60 backdrop-blur-md text-cyan-400 text-[10px] font-orbitron font-black tracking-[0.4em] uppercase mb-8"
           >
             <Zap className="w-3 h-3 fill-cyan-400" />
-            <span>PAGANI X SQUARE BOX STRATEGIC PARTNER</span>
+            <span>PAGANI X SBG GAMING STRATEGIC PARTNER</span>
           </motion.div>
           <motion.h1 
             initial={{ y: 20, opacity: 0 }}

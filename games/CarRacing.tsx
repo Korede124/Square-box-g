@@ -196,10 +196,10 @@ const CarRacing: React.FC<CarRacingProps> = ({ onGameOver, onStart }) => {
 
       <div className="absolute top-8 right-8 z-10 text-right space-y-4">
         <div className="flex flex-col">
-          <span className="text-yellow-500/40 text-[10px] font-black uppercase tracking-widest">Points</span>
+          <span className="text-yellow-500/40 text-[10px] font-black uppercase tracking-widest">SBG Points</span>
           <div className="flex items-baseline justify-end space-x-1">
             <span className="text-white text-4xl font-black italic">{Math.floor(score / 200)}</span>
-            <span className="text-white/40 text-xs">PTS</span>
+            <span className="text-white/40 text-xs">SBG</span>
           </div>
         </div>
         <div className="flex flex-col">
@@ -254,7 +254,7 @@ const CarRacing: React.FC<CarRacingProps> = ({ onGameOver, onStart }) => {
               
               <div className="bg-white/5 p-6 rounded-2xl border border-white/10 mb-10">
                 <div className="text-3xl font-black text-white">
-                  {Math.floor(score / 200)} <span className="text-xs text-white/40 uppercase tracking-widest">Points Earned</span>
+                  {Math.floor(score / 200)} <span className="text-xs text-white/40 uppercase tracking-widest">SBG Earned</span>
                 </div>
                 <div className="text-xl font-black text-white/60 mt-2">
                   {score} <span className="text-xs text-white/40 uppercase tracking-widest">Meters Traveled</span>

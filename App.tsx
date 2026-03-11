@@ -180,7 +180,7 @@ const App: React.FC = () => {
     localStorage.removeItem('sqb_user');
   };
 
-  const handleWithdraw = (amount: number, pointsUsed: number) => {
+  const handleWithdraw = (amount: number, pointsUsed: number, destination: string) => {
     const newPoints = points - pointsUsed;
     setPoints(newPoints);
     localStorage.setItem('sqb_points', newPoints.toString());
@@ -189,6 +189,7 @@ const App: React.FC = () => {
       setUser(updatedUser);
       localStorage.setItem('sqb_user', JSON.stringify(updatedUser));
     }
+    console.log(`Withdrawal of $${amount} (${pointsUsed} SBG) to ${destination} initiated.`);
   };
 
   const updateHighScore = (gameId: string, score: number) => {
@@ -254,7 +255,7 @@ const App: React.FC = () => {
             <Logo className="w-10 h-10 transition-transform duration-500 group-hover:rotate-[360deg]" />
             <div className="flex flex-col">
               <span className="font-orbitron text-2xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-white">
-                SQUARE BOX
+                SBG GAMING
               </span>
               <span className="text-[9px] font-orbitron font-bold tracking-[0.3em] text-white/30 uppercase">
                 By Yaks Technology
@@ -341,6 +342,7 @@ const App: React.FC = () => {
         isOpen={showWithdrawModal}
         onClose={() => setShowWithdrawModal(false)}
         currentPoints={points}
+        walletAddress={walletAddress}
         onWithdraw={handleWithdraw}
       />
 
@@ -351,7 +353,7 @@ const App: React.FC = () => {
             <Link to="/" className="flex items-center space-x-4 mb-6">
               <Logo className="w-12 h-12" />
               <div className="flex flex-col">
-                <span className="font-orbitron text-2xl font-black text-white">SQUARE BOX</span>
+                <span className="font-orbitron text-2xl font-black text-white">SBG GAMING</span>
                 <span className="text-[10px] font-orbitron font-bold text-white/20 uppercase tracking-[0.2em]">Developed by Yaks Technology</span>
               </div>
             </Link>
