@@ -185,7 +185,8 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onGameOver, personalBest, walletA
     if (!context) return;
 
     const animate = () => {
-      context.fillStyle = '#050505';
+      // Classic Green/Black Theme
+      context.fillStyle = '#0a0a0a'; // Deep black background
       context.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
 
       // Apply Screenshake
@@ -197,10 +198,9 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onGameOver, personalBest, walletA
         setShake(s => Math.max(0, s - 0.5));
       }
 
-      // Draw Grid (Subtle Pulse)
-      const pulse = Math.sin(Date.now() / 500) * 0.02 + 0.05;
-      context.strokeStyle = `rgba(0, 242, 255, ${pulse})`;
-      context.lineWidth = 0.5;
+      // Draw Grid (Classic subtle green lines)
+      context.strokeStyle = 'rgba(0, 255, 65, 0.05)';
+      context.lineWidth = 1;
       for(let i = 0; i < CANVAS_SIZE; i += GRID_SIZE) {
           context.beginPath();
           context.moveTo(i, 0);
@@ -212,61 +212,49 @@ const SnakeGame: React.FC<SnakeGameProps> = ({ onGameOver, personalBest, walletA
           context.stroke();
       }
 
-      // Draw Food
-      const foodPulse = Math.sin(Date.now() / 150) * 5;
-      context.fillStyle = '#ff007b';
-      context.shadowBlur = 15 + foodPulse;
-      context.shadowColor = '#ff007b';
-      context.beginPath();
-      context.arc(
-          food.x * GRID_SIZE + GRID_SIZE / 2,
-          food.y * GRID_SIZE + GRID_SIZE / 2,
-          (GRID_SIZE / 3) + (foodPulse / 4),
-          0,
-          Math.PI * 2
+      // Draw Food (Classic blocky green)
+      context.fillStyle = '#00ff41';
+      context.shadowBlur = 10;
+      context.shadowColor = '#00ff41';
+      context.fillRect(
+          food.x * GRID_SIZE + 2,
+          food.y * GRID_SIZE + 2,
+          GRID_SIZE - 4,
+          GRID_SIZE - 4
       );
-      context.fill();
       context.shadowBlur = 0;
 
-      // Draw Snake
+      // Draw Snake (Classic blocky green segments)
       snake.forEach((segment, index) => {
-        // Body color shift
-        const ratio = index / snake.length;
-        context.fillStyle = index === 0 ? '#00f2ff' : `rgba(0, 106, 113, ${1 - ratio * 0.5})`;
+        // Classic green with slight variation for head
+        context.fillStyle = index === 0 ? '#00ff41' : '#008f11';
         
-        // Head Glow
         if (index === 0) {
-          context.shadowBlur = 20;
-          context.shadowColor = '#00f2ff';
+          context.shadowBlur = 15;
+          context.shadowColor = '#00ff41';
         } else {
           context.shadowBlur = 0;
         }
 
-        // Draw segment with rounded corners
-        const size = index === 0 ? GRID_SIZE - 2 : (GRID_SIZE - 4) * (1 - ratio * 0.2);
-        const offset = (GRID_SIZE - size) / 2;
-        
-        context.beginPath();
-        context.roundRect(
-          segment.x * GRID_SIZE + offset, 
-          segment.y * GRID_SIZE + offset, 
-          size, 
-          size, 
-          4
+        // Draw segment as a solid block
+        context.fillRect(
+          segment.x * GRID_SIZE + 1, 
+          segment.y * GRID_SIZE + 1, 
+          GRID_SIZE - 2, 
+          GRID_SIZE - 2
         );
-        context.fill();
       });
 
-      // Update & Draw Particles
+      // Update & Draw Particles (Green sparks)
       particles.current = particles.current.filter(p => {
         p.x += p.vx;
         p.y += p.vy;
         p.life -= 0.02;
-        p.vy += 0.1; // gravity
+        p.vy += 0.1;
         
-        context.fillStyle = p.color;
+        context.fillStyle = '#00ff41';
         context.globalAlpha = p.life;
-        context.fillRect(p.x, p.y, 3, 3);
+        context.fillRect(p.x, p.y, 2, 2);
         context.globalAlpha = 1.0;
         
         return p.life > 0;

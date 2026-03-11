@@ -14,13 +14,13 @@ export const GAMES: Game[] = [
   },
   {
     id: 'car-racing',
-    title: 'Velocity Racer',
-    description: 'Pseudo-3D F1 racing. Complete laps to earn points. High speed, high stakes.',
-    thumbnail: 'https://images.unsplash.com/photo-1676300185292-e23bb3db50ad?q=80&w=2070&auto=format&fit=crop',
+    title: 'Neon Drift',
+    description: 'Top-down arcade racing. Avoid obstacles and drift through the neon streets.',
+    thumbnail: 'https://images.unsplash.com/photo-1594731831303-366059635091?q=80&w=2070&auto=format&fit=crop',
     category: 'Racing',
     isBuiltIn: true,
     status: 'playable',
-    accentColor: 'purple'
+    accentColor: 'cyan'
   },
   {
     id: 'space-invaders',

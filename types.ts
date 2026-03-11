@@ -7,7 +7,7 @@ export interface Game {
   category: string;
   isBuiltIn: boolean;
   status: 'playable' | 'coming-soon';
-  accentColor: 'blue' | 'purple' | 'green' | 'orange';
+  accentColor: 'blue' | 'purple' | 'green' | 'orange' | 'cyan';
 }
 
 export interface User {
