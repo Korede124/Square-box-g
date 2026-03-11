@@ -23,12 +23,14 @@ const BREAKING = -MAX_SPEED;
 const DECEL = -MAX_SPEED / 5;
 const OFF_ROAD_DECEL = -MAX_SPEED / 2;
 const OFF_ROAD_LIMIT = MAX_SPEED / 4;
+const TOTAL_LAPS = 1;
 
 interface Segment {
   index: number;
   p1: { world: { x: number, y: number, z: number }, screen: { x: number, y: number, w: number } };
   p2: { world: { x: number, y: number, z: number }, screen: { x: number, y: number, w: number } };
   curve: number;
+  sprites?: { x: number, type: 'tower' | 'pillar' | 'light' }[];
   color: { road: string, grass: string, rumble: string, lane?: string };
   cars: any[];
 }
@@ -36,13 +38,16 @@ interface Segment {
 const CarRacing: React.FC<CarRacingProps> = ({ onGameOver, onStart }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [gameState, setGameState] = useState<'IDLE' | 'PLAYING' | 'GAMEOVER'>('IDLE');
-  const [score, setScore] = useState(0); // Laps completed
+  const [score, setScore] = useState(0); // Distance in meters
   const [speed, setSpeed] = useState(0);
   const [lapTime, setLapTime] = useState(0);
   const [shake, setShake] = useState(0);
+  const [position_rank, setPositionRank] = useState(22);
+  const [laps, setLaps] = useState(0);
   
   // Game state refs for the loop
   const position = useRef(0);
+  const totalDistance = useRef(0);
   const playerX = useRef(0); // -1 to 1
   const playerSpeed = useRef(0);
   const trackLength = useRef(0);
@@ -56,11 +61,20 @@ const CarRacing: React.FC<CarRacingProps> = ({ onGameOver, onStart }) => {
     
     const addSegment = (curve: number) => {
       const n = newSegments.length;
+      const sprites: any[] = [];
+      
+      // Add roadside objects every few segments
+      if (n % 10 === 0) {
+        sprites.push({ x: -1.5, type: Math.random() > 0.5 ? 'tower' : 'pillar' });
+        sprites.push({ x: 1.5, type: Math.random() > 0.5 ? 'tower' : 'pillar' });
+      }
+
       newSegments.push({
         index: n,
         p1: { world: { x: 0, y: 0, z: n * SEGMENT_LENGTH }, screen: { x: 0, y: 0, w: 0 } },
         p2: { world: { x: 0, y: 0, z: (n + 1) * SEGMENT_LENGTH }, screen: { x: 0, y: 0, w: 0 } },
         curve: curve,
+        sprites: sprites,
         color: Math.floor(n / RUMBLE_LENGTH) % 2 ? 
           { road: '#333', grass: '#111', rumble: '#555', lane: '#666' } : 
           { road: '#222', grass: '#080808', rumble: '#00f2ff' }
@@ -89,17 +103,44 @@ const CarRacing: React.FC<CarRacingProps> = ({ onGameOver, onStart }) => {
     trackLength.current = newSegments.length * SEGMENT_LENGTH;
     segments.current = newSegments;
 
-    // Add more AI cars with lane-changing behavior and different speeds
-    for (let i = 0; i < 40; i++) {
-      const segIndex = Math.floor(Math.random() * (newSegments.length - 100)) + 50;
+    // Add Finish Line markers
+    for (let i = newSegments.length - 10; i < newSegments.length; i++) {
+      newSegments[i].color.road = i % 2 === 0 ? '#333' : '#444';
+      if (i === newSegments.length - 1) {
+        newSegments[i].sprites = [{ x: 0, type: 'light' }]; // Marker for finish
+      }
+    }
+
+    // Add more AI cars in a grid formation at the start (P22 start)
+    // We need 21 cars ahead of us to be P22
+    for (let i = 0; i < 21; i++) {
+      const row = Math.floor(i / 2);
+      const col = i % 2;
+      const zPos = (row + 1) * 400 + 200; // Tighter grid spacing for visibility
+      const segIndex = Math.floor(zPos / SEGMENT_LENGTH);
+      
+      newSegments[segIndex].cars.push({
+        offset: col === 0 ? -0.5 : 0.5,
+        z: zPos,
+        speed: MAX_SPEED * 0.6 + Math.random() * MAX_SPEED * 0.2,
+        color: i % 5 === 0 ? '#ff1e00' : (i % 3 === 0 ? '#004225' : '#ffffff'),
+        laneChangeDir: 0,
+        laneChangeTimer: 100,
+        isAggressive: Math.random() > 0.7
+      });
+    }
+
+    // Add some random traffic further ahead
+    for (let i = 0; i < 20; i++) {
+      const segIndex = Math.floor(Math.random() * (newSegments.length - 500)) + 400;
       newSegments[segIndex].cars.push({
         offset: Math.random() * 1.6 - 0.8,
         z: segIndex * SEGMENT_LENGTH,
-        speed: MAX_SPEED * 0.4 + Math.random() * MAX_SPEED * 0.5,
-        color: i % 5 === 0 ? '#ff1e00' : (i % 3 === 0 ? '#004225' : '#ffffff'), // F1 Team Colors (Ferrari, Aston, etc)
+        speed: MAX_SPEED * 0.4 + Math.random() * MAX_SPEED * 0.4,
+        color: '#ffffff',
         laneChangeDir: Math.random() > 0.5 ? 1 : -1,
         laneChangeTimer: Math.random() * 50,
-        isAggressive: Math.random() > 0.7
+        isAggressive: false
       });
     }
   };
@@ -120,11 +161,14 @@ const CarRacing: React.FC<CarRacingProps> = ({ onGameOver, onStart }) => {
 
   const resetGame = () => {
     position.current = 0;
+    totalDistance.current = 0;
     playerX.current = 0;
     playerSpeed.current = 0;
     setScore(0);
     setSpeed(0);
     setLapTime(0);
+    setLaps(0);
+    setPositionRank(22);
     resetTrack();
     setGameState('PLAYING');
     if (onStart) onStart();
@@ -150,13 +194,24 @@ const CarRacing: React.FC<CarRacingProps> = ({ onGameOver, onStart }) => {
     playerSpeed.current = Math.max(0, Math.min(MAX_SPEED, playerSpeed.current));
     
     const oldPos = position.current;
-    position.current += playerSpeed.current * dt;
+    const moveDist = playerSpeed.current * dt;
+    position.current += moveDist;
+    totalDistance.current += moveDist;
+    
     if (position.current >= trackLength.current) {
       position.current -= trackLength.current;
-      setScore(s => s + 1); // Lap completed
+      setLaps(l => {
+        const newLaps = l + 1;
+        if (newLaps >= TOTAL_LAPS) {
+          setGameState('GAMEOVER');
+          onGameOver(Math.floor(totalDistance.current));
+        }
+        return newLaps;
+      });
     }
     
-    setSpeed(Math.floor((playerSpeed.current / MAX_SPEED) * 340)); // F1 top speed ~340km/h
+    setScore(Math.floor(totalDistance.current)); // Raw distance in meters
+    setSpeed(Math.floor((playerSpeed.current / MAX_SPEED) * 340));
 
     // Update AI Cars
     segments.current.forEach(seg => {
@@ -185,7 +240,7 @@ const CarRacing: React.FC<CarRacingProps> = ({ onGameOver, onStart }) => {
         if (Math.abs(car.z - position.current) < SEGMENT_LENGTH && Math.abs(car.offset - playerX.current) < 0.3) {
           if (playerSpeed.current > car.speed) {
             setGameState('GAMEOVER');
-            onGameOver(score);
+            onGameOver(Math.floor(totalDistance.current));
           } else {
             // Rear-ended by AI or side-swipe
             playerSpeed.current *= 0.7;
@@ -194,6 +249,17 @@ const CarRacing: React.FC<CarRacingProps> = ({ onGameOver, onStart }) => {
         }
       });
     });
+
+    // Update Rank
+    let rank = 1;
+    segments.current.forEach(seg => {
+      if (seg.cars.length > 0) {
+        seg.cars.forEach(car => {
+          if (car.z > position.current) rank++;
+        });
+      }
+    });
+    setPositionRank(Math.min(22, rank));
 
     // Centrifugal force in curves
     const playerSegment = findSegment(position.current);
@@ -216,9 +282,22 @@ const CarRacing: React.FC<CarRacingProps> = ({ onGameOver, onStart }) => {
 
     ctx.clearRect(0, 0, width, height);
 
-    // Background
-    ctx.fillStyle = '#050505';
-    ctx.fillRect(0, 0, width, height);
+    // Background (Sky)
+    const skyGradient = ctx.createLinearGradient(0, 0, 0, height / 2);
+    skyGradient.addColorStop(0, '#000814');
+    skyGradient.addColorStop(1, '#001d3d');
+    ctx.fillStyle = skyGradient;
+    ctx.fillRect(0, 0, width, height / 2);
+
+    // Stars
+    ctx.fillStyle = '#ffffff';
+    for (let i = 0; i < 50; i++) {
+      const starX = (Math.sin(i * 123.45) * 0.5 + 0.5) * width;
+      const starY = (Math.cos(i * 678.90) * 0.5 + 0.5) * (height / 2);
+      ctx.globalAlpha = Math.random() * 0.5 + 0.5;
+      ctx.fillRect(starX, starY, 1, 1);
+    }
+    ctx.globalAlpha = 1.0;
 
     const baseSegment = findSegment(position.current);
     const playerPercent = (position.current % SEGMENT_LENGTH) / SEGMENT_LENGTH;
@@ -272,6 +351,26 @@ const CarRacing: React.FC<CarRacingProps> = ({ onGameOver, onStart }) => {
       ctx.lineTo(p2.x - p2.w, p2.y);
       ctx.fill();
 
+      // Sprites (Towers/Pillars)
+      if (segment.sprites) {
+        segment.sprites.forEach(sprite => {
+          const spriteX = p1.x + (p1.w * sprite.x);
+          const spriteY = p1.y;
+          const spriteW = (sprite.type === 'tower' ? 100 : 40) * p1.scale * width / 2;
+          const spriteH = (sprite.type === 'tower' ? 400 : 150) * p1.scale * width / 2;
+          
+          ctx.fillStyle = sprite.type === 'tower' ? '#111' : '#222';
+          ctx.fillRect(spriteX - spriteW / 2, spriteY - spriteH, spriteW, spriteH);
+          
+          // Lights on towers
+          if (sprite.type === 'tower') {
+            ctx.fillStyle = '#00f2ff';
+            ctx.fillRect(spriteX - 2, spriteY - spriteH + 10, 4, 4);
+            ctx.fillRect(spriteX - 2, spriteY - spriteH + 30, 4, 4);
+          }
+        });
+      }
+
       // Lanes
       if (segment.color.lane) {
         const l1 = p1.w * 0.02;
@@ -307,6 +406,21 @@ const CarRacing: React.FC<CarRacingProps> = ({ onGameOver, onStart }) => {
     const bounce = (Math.random() * 2) * (playerSpeed.current / MAX_SPEED);
     const pX = width / 2;
     const pY = height - 100 + bounce;
+
+    // Speed Lines (Graphics improvement)
+    if (playerSpeed.current > MAX_SPEED * 0.7) {
+      ctx.strokeStyle = 'rgba(0, 242, 255, 0.2)';
+      ctx.lineWidth = 2;
+      for (let i = 0; i < 10; i++) {
+        const lineX = Math.random() * width;
+        const lineY = Math.random() * height;
+        const lineLen = Math.random() * 100 + 50;
+        ctx.beginPath();
+        ctx.moveTo(lineX, lineY);
+        ctx.lineTo(lineX, lineY + lineLen);
+        ctx.stroke();
+      }
+    }
 
     // F1 Car Body (Detailed)
     ctx.fillStyle = '#00f2ff';
@@ -425,11 +539,28 @@ const CarRacing: React.FC<CarRacingProps> = ({ onGameOver, onStart }) => {
       <div className="absolute top-8 right-8 z-10 text-right space-y-4">
         <div className="space-y-1">
           <div className="flex items-center justify-end space-x-2">
-            <span className="text-white/40 text-[10px] font-black uppercase tracking-widest">Laps Completed</span>
+            <span className="text-white/40 text-[10px] font-black uppercase tracking-widest">Position</span>
+            <Flag className="w-4 h-4 text-cyan-400" />
+          </div>
+          <div className="font-orbitron text-4xl font-black text-white italic">
+            P{position_rank}<span className="text-xs ml-1 text-white/40 not-italic">/22</span>
+          </div>
+        </div>
+
+        <div className="space-y-1">
+          <div className="flex items-center justify-end space-x-2">
+            <span className="text-white/40 text-[10px] font-black uppercase tracking-widest">Score</span>
             <Trophy className="w-4 h-4 text-yellow-500" />
           </div>
           <div className="font-orbitron text-4xl font-black text-white italic">
-            {score}
+            {Math.floor(score / 10)}<span className="text-xs ml-1 text-white/40 not-italic">PTS</span>
+          </div>
+        </div>
+
+        <div className="space-y-1">
+          <div className="text-white/40 text-[10px] font-black uppercase tracking-widest">Distance</div>
+          <div className="text-xl font-orbitron font-black text-white/60 italic">
+            {score}<span className="text-xs ml-1 text-white/40 not-italic">M</span>
           </div>
         </div>
 
@@ -512,12 +643,15 @@ const CarRacing: React.FC<CarRacingProps> = ({ onGameOver, onStart }) => {
                   {gameState === 'GAMEOVER' ? 'Final Classification' : 'Grand Prix Briefing'}
                 </div>
                 <div className="text-3xl font-orbitron font-black text-white">
-                  {score} <span className="text-xs text-white/40 uppercase tracking-widest">Laps Completed</span>
+                  {Math.floor(score / 10)} <span className="text-xs text-white/40 uppercase tracking-widest">Points Earned</span>
+                </div>
+                <div className="text-xl font-orbitron font-black text-white/60 mt-2">
+                  {score} <span className="text-xs text-white/40 uppercase tracking-widest">Meters Traveled</span>
                 </div>
                 <p className="mt-4 text-[10px] font-bold text-white/20 uppercase tracking-widest leading-relaxed">
                   {gameState === 'GAMEOVER' 
-                    ? 'Collision detected. Engine failure. Points awarded per completed lap.' 
-                    : 'Complete laps to earn points. Avoid other racers. Speed increases difficulty.'}
+                    ? 'Race concluded. Points awarded based on distance covered.' 
+                    : 'Start from P22. Overtake the field. 1 Lap sprint. Points per meter.'}
                 </p>
               </div>
 

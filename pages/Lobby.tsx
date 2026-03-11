@@ -234,22 +234,32 @@ const Lobby: React.FC<LobbyProps> = ({ walletAddress, connectWallet }) => {
             </div>
           </div>
 
-          <motion.div 
-            layout
-            className="grid grid-cols-1 md:grid-cols-2 gap-10"
-          >
-            {filteredGames.map((game, index) => (
-              <motion.div
-                key={game.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <GameCard game={game} />
-              </motion.div>
-            ))}
-          </motion.div>
+      <motion.div 
+        layout
+        className="grid grid-cols-1 md:grid-cols-2 gap-10"
+      >
+        {filteredGames.length > 0 ? (
+          filteredGames.map((game, index) => (
+            <motion.div
+              key={game.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.1 }}
+            >
+              <GameCard game={game} />
+            </motion.div>
+          ))
+        ) : (
+          <div className="col-span-full py-20 text-center">
+            <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6 border border-white/10">
+              <Search className="w-10 h-10 text-white/20" />
+            </div>
+            <h3 className="font-orbitron text-xl font-black text-white uppercase mb-2">No Modules Found</h3>
+            <p className="text-white/30 text-sm font-medium">Try adjusting your search parameters</p>
+          </div>
+        )}
+      </motion.div>
         </div>
 
         {/* Sidebar Mini-Leaderboard */}

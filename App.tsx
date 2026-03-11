@@ -125,14 +125,26 @@ const App: React.FC = () => {
         provider.on('chainChanged', () => window.location.reload());
       }
     } catch (error: any) {
+      console.error("Wallet Connection Error Details:", error);
+      
       if (error.code === 4001) {
         alert("Connection rejected. Please approve the request in your wallet.");
+      } else if (error.code === -32002) {
+        alert("Request already pending. Please check your wallet for a pending connection request.");
       } else {
-        console.error("Wallet Connection Error:", error);
-        let errorMsg = `Failed to connect to ${walletName}: ${error.message || 'Unknown error'}. Please ensure your wallet is unlocked and try again.`;
-        if (window.self !== window.top) {
-          errorMsg += "\n\nNote: Browsers often block wallet connections in iframes. If this persists, try opening the app in a new tab.";
+        let errorMsg = `Failed to connect to ${walletName}.`;
+        
+        if (error.message) {
+          errorMsg += `\n\nError: ${error.message}`;
         }
+
+        if (window.self !== window.top) {
+          errorMsg += "\n\nCRITICAL: You are running this app in an iframe. Most wallets (MetaMask, OKX) block connection requests from iframes for security reasons.";
+          errorMsg += "\n\nACTION REQUIRED: Please open this application in a NEW TAB using the button in the top right of the preview to connect your wallet.";
+        } else {
+          errorMsg += "\n\nPlease ensure your wallet is unlocked and you have approved the connection.";
+        }
+        
         alert(errorMsg);
       }
     } finally {
@@ -189,11 +201,13 @@ const App: React.FC = () => {
       else if (score >= 500) earnedPoints += 50; // 50 food
       else if (score >= 200) earnedPoints += 10; // 20 food
     } else if (gameId === 'car-racing') {
-      // Velocity Racer: 1 point per lap
-      if (score >= 50) earnedPoints += 200; // Endurance master
-      else if (score >= 25) earnedPoints += 100; // Pro racer
-      else if (score >= 10) earnedPoints += 50; // Skilled racer
-      else if (score >= 3) earnedPoints += 10; // Beginner
+      // Velocity Racer: 1 point per 10 meters
+      earnedPoints += Math.floor(score / 10);
+      
+      // Bonus for significant distances
+      if (score >= 5000) earnedPoints += 500; // Endurance master (5km)
+      else if (score >= 2000) earnedPoints += 200; // Pro racer (2km)
+      else if (score >= 1000) earnedPoints += 100; // Skilled racer (1km)
     }
 
     const newTotalPoints = points + earnedPoints;
