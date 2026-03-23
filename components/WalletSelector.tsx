@@ -1,14 +1,16 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Wallet } from 'lucide-react';
+import { X, Wallet, AlertCircle, ExternalLink } from 'lucide-react';
 
 interface WalletSelectorProps {
   isOpen: boolean;
   onClose: () => void;
   onSelect: (providerType: 'metamask' | 'okx' | 'injected') => void;
+  error?: string | null;
 }
 
-const WalletSelector: React.FC<WalletSelectorProps> = ({ isOpen, onClose, onSelect }) => {
+const WalletSelector: React.FC<WalletSelectorProps> = ({ isOpen, onClose, onSelect, error }) => {
+  const isIframe = window.self !== window.top;
   return (
     <AnimatePresence>
       {isOpen && (
@@ -45,6 +47,40 @@ const WalletSelector: React.FC<WalletSelectorProps> = ({ isOpen, onClose, onSele
             </div>
 
             <div className="space-y-4">
+              {isIframe && (
+                <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 mb-4">
+                  <div className="flex items-start space-x-3">
+                    <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+                    <div className="space-y-2">
+                      <p className="text-[10px] font-bold text-amber-200 uppercase tracking-widest leading-relaxed">
+                        Iframe Detected
+                      </p>
+                      <p className="text-[9px] text-white/50 leading-relaxed">
+                        Wallets often block connections from iframes. For the best experience, open the app in a new tab.
+                      </p>
+                      <button 
+                        onClick={() => window.open(window.location.href, '_blank')}
+                        className="flex items-center space-x-2 text-[9px] font-black text-amber-500 hover:text-amber-400 uppercase tracking-widest transition-colors"
+                      >
+                        <span>Open in New Tab</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {error && (
+                <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-4 mb-4 animate-in fade-in slide-in-from-top-2">
+                  <div className="flex items-start space-x-3">
+                    <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+                    <p className="text-[9px] font-bold text-red-200 uppercase tracking-widest leading-relaxed">
+                      {error}
+                    </p>
+                  </div>
+                </div>
+              )}
+
               {/* MetaMask */}
               <button
                 onClick={() => onSelect('metamask')}

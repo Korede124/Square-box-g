@@ -158,24 +158,55 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose, currentP
               )}
 
               {step === 'authorize' && (
-                <div className="py-8 space-y-8 animate-in fade-in zoom-in duration-300">
+                <div className="py-6 space-y-6 animate-in fade-in zoom-in duration-300">
                   <div className="bg-yellow-500/10 border border-yellow-500/30 p-6 rounded-3xl text-center">
-                    <AlertCircle className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
-                    <h4 className="text-white font-orbitron font-black uppercase mb-2">Authorization Required</h4>
+                    <AlertCircle className="w-10 h-10 text-yellow-500 mx-auto mb-4" />
+                    <h4 className="text-white font-orbitron font-black uppercase mb-2">Authorize Transaction</h4>
                     <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest leading-relaxed">
-                      You are about to authorize the withdrawal of <span className="text-white">{withdrawAmount.toLocaleString()} SBG Points</span> (${(withdrawAmount * CONVERSION_RATE).toFixed(2)}) to the following address:
+                      Please review the transaction details below.
                     </p>
-                    <div className="mt-4 p-3 bg-black/40 rounded-xl font-mono text-[10px] text-cyan-400 break-all border border-white/5">
-                      {destinationAddress}
-                    </div>
                   </div>
 
                   <div className="space-y-4">
+                    <div className="bg-white/5 border border-white/10 rounded-2xl p-5 space-y-4">
+                      <div className="space-y-2">
+                        <label className="block text-[9px] font-black text-white/20 uppercase tracking-[0.2em]">Destination Wallet</label>
+                        <div className="p-3 bg-black/40 rounded-xl font-mono text-[10px] text-cyan-400 break-all border border-white/5">
+                          {destinationAddress}
+                        </div>
+                      </div>
+
+                      <div className="h-px bg-white/5"></div>
+
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest">
+                          <span className="text-white/40">SBG Points Deducted</span>
+                          <span className="text-white">{withdrawAmount.toLocaleString()} SBG</span>
+                        </div>
+                        <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest">
+                          <span className="text-white/40">Gross Value</span>
+                          <span className="text-white">${(withdrawAmount * CONVERSION_RATE).toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest">
+                          <span className="text-white/40">Network Fee (Est.)</span>
+                          <span className="text-emerald-400">-$0.05</span>
+                        </div>
+                        <div className="pt-3 border-t border-white/5 flex justify-between items-center">
+                          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-400">Net to Receive</span>
+                          <span className="text-xl font-orbitron font-black text-white">
+                            ${Math.max(0, (withdrawAmount * CONVERSION_RATE) - 0.05).toFixed(2)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
                     <button
                       onClick={handleAuthorize}
-                      className="w-full bg-white text-black font-orbitron font-black py-5 rounded-2xl transition-all hover:scale-105 active:scale-95 uppercase tracking-[0.3em]"
+                      className="w-full bg-white text-black font-orbitron font-black py-5 rounded-2xl transition-all hover:scale-[1.02] active:scale-95 uppercase tracking-[0.3em] shadow-[0_0_20px_rgba(255,255,255,0.1)]"
                     >
-                      AUTHORIZE TRANSACTION
+                      AUTHORIZE NOW
                     </button>
                     <button
                       onClick={() => setStep('input')}

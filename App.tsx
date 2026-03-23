@@ -25,6 +25,7 @@ const App: React.FC = () => {
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const [connectionError, setConnectionError] = useState<string | null>(null);
   const location = useLocation();
 
   const toggleMute = () => {
@@ -90,6 +91,7 @@ const App: React.FC = () => {
 
     const walletName = providerType === 'okx' ? 'OKX Wallet' : (providerType === 'metamask' ? 'MetaMask' : 'EVM Wallet');
     let provider: any = null;
+    setConnectionError(null);
 
     try {
       if (providerType === 'okx') {
@@ -107,7 +109,7 @@ const App: React.FC = () => {
       }
 
       if (!provider) {
-        alert(`${walletName} not detected! Please install the extension to continue.`);
+        setConnectionError(`${walletName} not detected! Please install the extension to continue.`);
         const downloadUrl = providerType === 'okx' ? 'https://www.okx.com/web3' : 'https://metamask.io/download/';
         window.open(downloadUrl, '_blank');
         return;
@@ -128,24 +130,24 @@ const App: React.FC = () => {
       console.error("Wallet Connection Error Details:", error);
       
       if (error.code === 4001) {
-        alert("Connection rejected. Please approve the request in your wallet.");
+        setConnectionError("Connection rejected. Please approve the request in your wallet.");
       } else if (error.code === -32002) {
-        alert("Request already pending. Please check your wallet for a pending connection request.");
+        setConnectionError("Request already pending. Please check your wallet for a pending connection request.");
       } else {
         let errorMsg = `Failed to connect to ${walletName}.`;
         
         if (error.message) {
-          errorMsg += `\n\nError: ${error.message}`;
+          errorMsg += ` ${error.message}`;
         }
 
         if (window.self !== window.top) {
-          errorMsg += "\n\nCRITICAL: You are running this app in an iframe. Most wallets (MetaMask, OKX) block connection requests from iframes for security reasons.";
-          errorMsg += "\n\nACTION REQUIRED: Please open this application in a NEW TAB using the button in the top right of the preview to connect your wallet.";
+          errorMsg += " CRITICAL: You are running this app in an iframe. Most wallets (MetaMask, OKX) block connection requests from iframes for security reasons.";
+          errorMsg += " ACTION REQUIRED: Please open this application in a NEW TAB using the button in the top right of the preview to connect your wallet.";
         } else {
-          errorMsg += "\n\nPlease ensure your wallet is unlocked and you have approved the connection.";
+          errorMsg += " Please ensure your wallet is unlocked and you have approved the connection.";
         }
         
-        alert(errorMsg);
+        setConnectionError(errorMsg);
       }
     } finally {
       setIsConnecting(false);
@@ -334,8 +336,12 @@ const App: React.FC = () => {
 
       <WalletSelector 
         isOpen={showWalletSelector} 
-        onClose={() => setShowWalletSelector(false)} 
+        onClose={() => {
+          setShowWalletSelector(false);
+          setConnectionError(null);
+        }} 
         onSelect={(type) => connectWallet(type)} 
+        error={connectionError}
       />
 
       <WithdrawModal 

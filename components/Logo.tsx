@@ -15,8 +15,10 @@ const Logo: React.FC<LogoProps> = ({ className = "w-10 h-10" }) => {
         {/* Main Box Body */}
         <rect x="15" y="15" width="70" height="70" rx="8" fill="#00f2ff" fillOpacity="0.1" stroke="#00f2ff" strokeWidth="4" />
         
-        {/* Inner Stylized 'S' for Square */}
-        <path d="M35 35H65V45H35V55H65V65H35" stroke="white" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+        {/* Inner Stylized 'SBG' or Tech Shape */}
+        <path d="M30 35H70V45H40V55H70V65H30V35Z" fill="#00f2ff" fillOpacity="0.2" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M45 45V55" stroke="white" strokeWidth="4" strokeLinecap="round" />
+        <path d="M55 45V55" stroke="white" strokeWidth="4" strokeLinecap="round" />
         
         {/* Corner Accents */}
         <path d="M15 30V15H30" stroke="white" strokeWidth="2" />

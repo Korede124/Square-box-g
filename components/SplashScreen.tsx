@@ -61,7 +61,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
           className="mb-8"
         >
           <h1 className="font-orbitron text-4xl md:text-6xl font-black text-white tracking-tighter mb-2 uppercase">
-            SQUARE BOX <span className="text-cyan-400">GAMING</span>
+            SBG <span className="text-cyan-400">GAMING</span>
           </h1>
           <p className="font-orbitron text-[10px] md:text-xs font-bold tracking-[0.4em] text-white/30 uppercase">
             By Yaks Technology
