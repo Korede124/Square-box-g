@@ -11,26 +11,6 @@ export const GAMES: Game[] = [
     isBuiltIn: true,
     status: 'playable',
     accentColor: 'green'
-  },
-  {
-    id: 'car-racing',
-    title: 'Neon Drift',
-    description: 'Top-down arcade racing. Avoid obstacles and drift through the neon streets.',
-    thumbnail: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?q=80&w=2070&auto=format&fit=crop',
-    category: 'Racing',
-    isBuiltIn: true,
-    status: 'playable',
-    accentColor: 'cyan'
-  },
-  {
-    id: 'space-invaders',
-    title: 'Void Invaders',
-    description: 'Defend the galaxy from pixelated threats.',
-    thumbnail: 'https://images.unsplash.com/photo-1614728263952-84ea256f9679?q=80&w=2070&auto=format&fit=crop',
-    category: 'Shooter',
-    isBuiltIn: false,
-    status: 'coming-soon',
-    accentColor: 'orange'
   }
 ];
 
