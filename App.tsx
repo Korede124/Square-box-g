@@ -197,10 +197,8 @@ const App: React.FC = () => {
     let earnedPoints = 2; // Base participation points
 
     if (gameId === 'snake') {
-      // Snake: 10 points per food
-      if (score >= 1000) earnedPoints += 100; // 100 food
-      else if (score >= 500) earnedPoints += 50; // 50 food
-      else if (score >= 200) earnedPoints += 10; // 20 food
+      // Snake: 10 score = 1 SBG point
+      earnedPoints += Math.floor(score / 10);
     } else if (gameId === 'car-racing') {
       // Velocity Racer: 5 points per 1km (1 point per 200 meters)
       earnedPoints += Math.floor(score / 200);
