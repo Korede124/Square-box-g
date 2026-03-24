@@ -30,8 +30,8 @@ const Lobby: React.FC<LobbyProps> = ({ walletAddress, connectWallet }) => {
         {/* Partnership Background Image */}
         <div className="absolute inset-0 z-0">
           <img 
-            src="https://images.unsplash.com/photo-1676300185292-e23bb3db50ad?q=80&w=2070&auto=format&fit=crop" 
-            alt="Pagani Utopia Background" 
+            src="https://images.unsplash.com/photo-1635326444740-485ad076489d?q=80&w=2070&auto=format&fit=crop" 
+            alt="Gaming Background" 
             className="w-full h-full object-cover opacity-60 scale-105 animate-pulse-slow"
             referrerPolicy="no-referrer"
           />
@@ -47,7 +47,7 @@ const Lobby: React.FC<LobbyProps> = ({ walletAddress, connectWallet }) => {
             className="inline-flex items-center space-x-3 px-6 py-2 rounded-full border border-cyan-500/50 bg-black/60 backdrop-blur-md text-cyan-400 text-[10px] font-orbitron font-black tracking-[0.4em] uppercase mb-8"
           >
             <Zap className="w-3 h-3 fill-cyan-400" />
-            <span>PAGANI X SBG GAMING STRATEGIC PARTNER</span>
+            <span>SBG GAMING ARCADE NETWORK</span>
           </motion.div>
           <motion.h1 
             initial={{ y: 20, opacity: 0 }}
@@ -64,7 +64,7 @@ const Lobby: React.FC<LobbyProps> = ({ walletAddress, connectWallet }) => {
             transition={{ delay: 0.4 }}
             className="text-white text-lg md:text-2xl font-bold max-w-3xl mx-auto mb-12 leading-relaxed drop-shadow-lg"
           >
-            The world's most advanced arcade network, powered by OKX and Somnia. 
+            The world's most advanced arcade network, powered by Somnia. 
             Experience the fusion of high-performance engineering and Web3 gaming.
           </motion.p>
           <motion.div 
@@ -90,52 +90,8 @@ const Lobby: React.FC<LobbyProps> = ({ walletAddress, connectWallet }) => {
         </div>
       </section>
 
-      {/* Strategic Partnership Section */}
-      <section className="max-w-7xl mx-auto px-6 mb-32">
-        <div className="relative rounded-[3rem] overflow-hidden border border-white/10 bg-black shadow-2xl">
-          <div className="grid grid-cols-1 lg:grid-cols-2">
-            <div className="relative h-[300px] lg:h-auto overflow-hidden">
-              <img 
-                src="https://images.unsplash.com/photo-1594731831303-366059635091?q=80&w=2070&auto=format&fit=crop" 
-                alt="Pagani Huayra Roadster" 
-                className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent lg:hidden"></div>
-            </div>
-            <div className="p-12 flex flex-col justify-center">
-              <div className="flex items-center space-x-4 mb-6">
-                <div className="px-4 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-[10px] font-orbitron font-black tracking-[0.3em] uppercase">
-                  Strategic Asset
-                </div>
-                <div className="h-px w-12 bg-white/10"></div>
-                <span className="text-white/30 text-[10px] font-orbitron font-black tracking-[0.3em] uppercase">Verified</span>
-              </div>
-              <h2 className="font-orbitron text-4xl md:text-5xl font-black text-white mb-6 uppercase tracking-tighter leading-none">
-                PAGANI X <br/>
-                <span className="text-cyan-400">SQUARE BOX</span>
-              </h2>
-              <p className="text-white/50 text-lg mb-10 leading-relaxed">
-                Experience the pinnacle of digital performance. Our collaboration with Pagani brings world-class engineering aesthetics to the arcade, ensuring every session is as refined as it is fast.
-              </p>
-              <div className="flex items-center space-x-8">
-                <div className="flex flex-col">
-                  <span className="text-white/20 text-[10px] font-black uppercase tracking-widest mb-1">Engine</span>
-                  <span className="text-white font-orbitron font-black">V12 DIGITAL</span>
-                </div>
-                <div className="w-px h-8 bg-white/10"></div>
-                <div className="flex flex-col">
-                  <span className="text-white/20 text-[10px] font-black uppercase tracking-widest mb-1">Network</span>
-                  <span className="text-cyan-400 font-orbitron font-black">SOMNIA MAINNET</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Dashboard Stats Strip */}
-      <div className="max-w-7xl mx-auto px-6 -mt-16 mb-24 relative z-20">
+      <div className="max-w-7xl mx-auto px-6 mb-24 relative z-20">
         <motion.div 
           initial={{ y: 40, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -166,50 +122,6 @@ const Lobby: React.FC<LobbyProps> = ({ walletAddress, connectWallet }) => {
           </div>
         </motion.div>
       </div>
-
-      {/* Pagani Vision Section */}
-      <section className="max-w-7xl mx-auto px-6 mb-32">
-        <div className="flex flex-col md:flex-row items-center gap-16">
-          <div className="flex-1 space-y-8">
-            <div className="inline-flex items-center space-x-3 px-4 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/5 text-cyan-400 text-[10px] font-orbitron font-black tracking-[0.3em] uppercase">
-              Vision Module
-            </div>
-            <h2 className="font-orbitron text-5xl md:text-7xl font-black text-white leading-[0.85] uppercase tracking-tighter">
-              PAGANI <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-white">UTOPIA</span>
-            </h2>
-            <p className="text-white/40 text-lg leading-relaxed max-w-xl">
-              A masterpiece of kinetic art. The Pagani Utopia represents the pinnacle of automotive design, now integrated into the Square Box ecosystem for an unparalleled digital experience.
-            </p>
-            <div className="grid grid-cols-2 gap-8">
-              <div className="space-y-1">
-                <div className="text-white/20 text-[10px] font-black uppercase tracking-widest">Acceleration</div>
-                <div className="text-white font-orbitron font-black text-xl">0-100 IN 2.8S</div>
-              </div>
-              <div className="space-y-1">
-                <div className="text-white/20 text-[10px] font-black uppercase tracking-widest">Top Speed</div>
-                <div className="text-white font-orbitron font-black text-xl">350+ KM/H</div>
-              </div>
-            </div>
-          </div>
-          <div className="flex-1 relative group">
-            <div className="absolute -inset-4 bg-cyan-500/20 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-            <div className="relative rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl">
-              <img 
-                src="https://images.unsplash.com/photo-1676300185292-e23bb3db50ad?q=80&w=2070&auto=format&fit=crop" 
-                alt="Pagani Utopia AI Vision" 
-                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-              <div className="absolute bottom-8 left-8">
-                <div className="text-white/40 text-[10px] font-black uppercase tracking-widest mb-1">Model Status</div>
-                <div className="text-white font-orbitron font-black">ACTIVE PROTOCOL</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Main Content Area */}
       <div id="games" className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-16">
@@ -311,7 +223,7 @@ const Lobby: React.FC<LobbyProps> = ({ walletAddress, connectWallet }) => {
                 <Wallet className="w-12 h-12 text-cyan-400" />
               </div>
               <h4 className="font-orbitron text-sm font-black text-white mb-3 uppercase tracking-widest">EVM WALLET REQUIRED</h4>
-              <p className="text-white/40 text-[10px] mb-8 leading-relaxed uppercase font-bold tracking-widest">To secure your high scores and join the global leaderboards, you must link your identity via the EVM Protocol. Compatible with MetaMask, OKX, and Somnia.</p>
+              <p className="text-white/40 text-[10px] mb-8 leading-relaxed uppercase font-bold tracking-widest">To secure your high scores and join the global leaderboards, you must link your identity via the EVM Protocol. Compatible with MetaMask and Somnia.</p>
               <button 
                 onClick={connectWallet}
                 className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-orbitron font-black py-4 rounded-2xl text-[10px] uppercase tracking-[0.2em] shadow-lg shadow-cyan-500/20 active:scale-95 transition-all"

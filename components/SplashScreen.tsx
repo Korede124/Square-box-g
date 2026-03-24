@@ -81,10 +81,6 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
             <div className="flex items-center space-x-3 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all">
               <span className="font-orbitron text-lg font-black text-white tracking-tighter">SOMNIA</span>
             </div>
-            <div className="w-px h-6 bg-white/10"></div>
-            <div className="flex items-center space-x-3 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all">
-              <span className="font-orbitron text-lg font-black text-white tracking-tighter">OKX WALLET</span>
-            </div>
           </div>
         </motion.div>
 

@@ -5,7 +5,7 @@ import { X, Wallet, AlertCircle, ExternalLink } from 'lucide-react';
 interface WalletSelectorProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelect: (providerType: 'metamask' | 'okx' | 'injected') => void;
+  onSelect: (providerType: 'metamask' | 'injected') => void;
   error?: string | null;
 }
 
@@ -96,23 +96,6 @@ const WalletSelector: React.FC<WalletSelectorProps> = ({ isOpen, onClose, onSele
                   </div>
                 </div>
                 <div className="w-2 h-2 rounded-full bg-orange-500 group-hover:animate-pulse"></div>
-              </button>
-
-              {/* OKX Wallet */}
-              <button
-                onClick={() => onSelect('okx')}
-                className="w-full group flex items-center justify-between p-5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/30 rounded-2xl transition-all active:scale-[0.98]"
-              >
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center border border-white/20">
-                    <img src="https://static.okx.com/cdn/assets/imgs/221/6115967520B10E60.png" className="w-7 h-7 invert" alt="OKX" />
-                  </div>
-                  <div className="text-left">
-                    <div className="font-orbitron text-sm font-black text-white uppercase tracking-tight">OKX Wallet</div>
-                    <div className="text-[9px] font-bold text-white/30 uppercase tracking-widest">Multi-Chain Interface</div>
-                  </div>
-                </div>
-                <div className="w-2 h-2 rounded-full bg-white group-hover:animate-pulse"></div>
               </button>
 
               {/* Browser Wallet */}

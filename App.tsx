@@ -83,20 +83,18 @@ const App: React.FC = () => {
     };
   }, [handleAccountsChanged]);
 
-  const connectWallet = async (providerType?: 'metamask' | 'okx' | 'injected') => {
+  const connectWallet = async (providerType?: 'metamask' | 'injected') => {
     if (!providerType) {
       setShowWalletSelector(true);
       return;
     }
 
-    const walletName = providerType === 'okx' ? 'OKX Wallet' : (providerType === 'metamask' ? 'MetaMask' : 'EVM Wallet');
+    const walletName = providerType === 'metamask' ? 'MetaMask' : 'EVM Wallet';
     let provider: any = null;
     setConnectionError(null);
 
     try {
-      if (providerType === 'okx') {
-        provider = (window as any).okxwallet;
-      } else if (providerType === 'metamask') {
+      if (providerType === 'metamask') {
         // Look for MetaMask specifically if multiple providers exist
         const ethereum = (window as any).ethereum;
         if (ethereum?.providers && Array.isArray(ethereum.providers)) {
@@ -110,7 +108,7 @@ const App: React.FC = () => {
 
       if (!provider) {
         setConnectionError(`${walletName} not detected! Please install the extension to continue.`);
-        const downloadUrl = providerType === 'okx' ? 'https://www.okx.com/web3' : 'https://metamask.io/download/';
+        const downloadUrl = providerType === 'metamask' ? 'https://metamask.io/download/' : 'https://metamask.io/download/';
         window.open(downloadUrl, '_blank');
         return;
       }
@@ -141,7 +139,7 @@ const App: React.FC = () => {
         }
 
         if (window.self !== window.top) {
-          errorMsg += " CRITICAL: You are running this app in an iframe. Most wallets (MetaMask, OKX) block connection requests from iframes for security reasons.";
+          errorMsg += " CRITICAL: You are running this app in an iframe. Most wallets (MetaMask) block connection requests from iframes for security reasons.";
           errorMsg += " ACTION REQUIRED: Please open this application in a NEW TAB using the button in the top right of the preview to connect your wallet.";
         } else {
           errorMsg += " Please ensure your wallet is unlocked and you have approved the connection.";
@@ -366,7 +364,7 @@ const App: React.FC = () => {
             <p className="text-white/40 text-sm leading-relaxed mb-8">
               The premier destination for high-performance arcade experiences in the browser. 
               Our proprietary game engine ensures low-latency competitive play across all modern devices.
-              Official partner with Somnia and OKX Wallet. EVM authentication required for high-score verification.
+              Official partner with Somnia. EVM authentication required for high-score verification.
             </p>
           </div>
           
@@ -382,7 +380,7 @@ const App: React.FC = () => {
         </div>
         
         <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-black text-white/20 uppercase tracking-[0.3em]">
-          <div>© 2024 YAKS TECHNOLOGY • POWERED BY EVM PROTOCOL • PARTNERED WITH SOMNIA & OKX</div>
+          <div>© 2024 YAKS TECHNOLOGY • POWERED BY EVM PROTOCOL • PARTNERED WITH SOMNIA</div>
           <div className="flex space-x-6">
             <span className="text-green-500/50">SYSTEMS: OPERATIONAL</span>
             <span className="text-cyan-500/50">VERSION: 2.1.0-STABLE</span>
